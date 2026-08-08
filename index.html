@@ -390,7 +390,7 @@
     const visualizer = document.getElementById('visualizer');
     const playIconSvg = document.getElementById('playIconSvg');
 
-    // Helper to generate vector SVG cups
+    // Helper to generate full vector SVG cups sequence for card badges
     function renderVectorCups(count) {
       let html = '<div class="flex items-center gap-1" title="' + count + ' Cups Rating">';
       for(let i = 1; i <= 3; i++) {
@@ -407,6 +407,19 @@
       }
       html += '</div>';
       return html;
+    }
+
+    // Helper to generate a single cup vector icon for map pins
+    function renderSingleCupIcon() {
+      return `
+        <svg class="w-3.5 h-3.5 text-amber-300 fill-amber-300/30" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+          <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path>
+          <line x1="6" y1="2" x2="6" y2="4"></line>
+          <line x1="10" y1="2" x2="10" y2="4"></line>
+          <line x1="14" y1="2" x2="14" y2="4"></line>
+        </svg>
+      `;
     }
 
     // Initialize Leaflet Map
@@ -428,7 +441,7 @@
       L.control.zoom({ position: 'topright' }).addTo(leafletMap);
     }
 
-    // Render/Update Pins on Map using Vector SVG Cup Icons
+    // Render/Update Pins on Map using compact Number + Single Cup Pill Badge
     function updateMapMarkers(filteredShops) {
       if (!leafletMap) return;
 
@@ -447,12 +460,13 @@
         if (coords[0] && coords[1]) {
           bounds.push(coords);
 
-          // Custom Marker Icon with exact vector SVG cups
+          // Compact Map Pin Badge (Number + Single Vector Cup Icon)
           const customIcon = L.divIcon({
             className: 'custom-map-pin',
             html: `
-              <div class="px-2.5 py-1.5 bg-gradient-to-r from-espresso-900/95 to-espresso-950/95 backdrop-blur-md border border-amber-400/40 rounded-xl shadow-2xl flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform">
-                ${renderVectorCups(shop.cups || 1)}
+              <div class="px-2.5 py-1 bg-espresso-950/95 border border-amber-400/50 rounded-full shadow-2xl flex items-center gap-1 text-amber-300 font-bold text-xs transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-all font-mono">
+                <span>${shop.cups || 1}</span>
+                ${renderSingleCupIcon()}
               </div>
             `,
             iconSize: [0, 0],
