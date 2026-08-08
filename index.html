@@ -328,40 +328,14 @@
   </main>
 
   <script>
-    // Replace with your actual Sanity Project ID (e.g. '3x8k2p9q')
     const SANITY_PROJECT_ID = 'cxp9yxyf'; 
     const SANITY_DATASET = 'production';
 
-    // Sanity GROQ query fetching all published coffee shops
+    // GROQ Query to pull all published shop documents from Sanity
     const SANITY_QUERY = encodeURIComponent('*[_type == "shop"]{ "id": _id, name, neighborhood, cups, price, "image": image.asset->url, vibe, workFriendly, bestDrinks, address, review }');
     const SANITY_URL = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${SANITY_QUERY}`;
 
     let shops = [];
-    let currentCupFilter = 'All';
-    let currentNeighborhoodFilter = 'All';
-
-    // Fetch shops live from Sanity
-    async function fetchShopsFromSanity() {
-      try {
-        const response = await fetch(SANITY_URL);
-        const data = await response.json();
-        
-        if (data.result && data.result.length > 0) {
-          shops = data.result;
-        } else {
-          console.log('No shops found in Sanity yet. Showing fallback data.');
-        }
-      } catch (error) {
-        console.error('Error fetching from Sanity:', error);
-      } finally {
-        renderNeighborhoodPills();
-        renderShops();
-      }
-    }
-
-    // Call fetch on initial page load
-    fetchShopsFromSanity();
-
     let currentCupFilter = 'All';
     let currentNeighborhoodFilter = 'All';
 
@@ -371,6 +345,25 @@
     const bgAudio = document.getElementById('bgAudio');
     const visualizer = document.getElementById('visualizer');
     const playIconSvg = document.getElementById('playIconSvg');
+
+    // Fetch live shops from Sanity API
+    async function fetchShopsFromSanity() {
+      try {
+        const response = await fetch(SANITY_URL);
+        const data = await response.json();
+        
+        if (data.result && data.result.length > 0) {
+          shops = data.result;
+        } else {
+          console.log('No shops found in Sanity yet.');
+        }
+      } catch (error) {
+        console.error('Error fetching from Sanity:', error);
+      } finally {
+        renderNeighborhoodPills();
+        renderShops();
+      }
+    }
 
     function toggleAudio() {
       if (bgAudio.paused) {
@@ -386,7 +379,6 @@
       }
     }
 
-    // Helper to generate vector SVG cups
     function renderVectorCups(count) {
       let html = '<div class="flex items-center gap-1" title="' + count + ' Cups Rating">';
       for(let i = 1; i <= 3; i++) {
@@ -405,11 +397,10 @@
       return html;
     }
 
-    const neighborhoods = ['All', ...new Set(shops.map(s => s.neighborhood))];
-    
     function renderNeighborhoodPills() {
+      const uniqueNeighborhoods = ['All', ...new Set(shops.map(s => s.neighborhood).filter(Boolean))];
       neighborhoodPills.innerHTML = '';
-      neighborhoods.forEach(n => {
+      uniqueNeighborhoods.forEach(n => {
         const btn = document.createElement('button');
         const isActive = currentNeighborhoodFilter === n;
         
@@ -451,9 +442,9 @@
 
       const filtered = shops.filter(shop => {
         const matchesQuery = 
-          shop.name.toLowerCase().includes(query) ||
-          shop.vibe.toLowerCase().includes(query) ||
-          shop.bestDrinks.some(d => d.toLowerCase().includes(query));
+          (shop.name && shop.name.toLowerCase().includes(query)) ||
+          (shop.vibe && shop.vibe.toLowerCase().includes(query)) ||
+          (shop.bestDrinks && shop.bestDrinks.some(d => d.toLowerCase().includes(query)));
         
         const matchesNeighborhood = currentNeighborhoodFilter === 'All' || shop.neighborhood === currentNeighborhoodFilter;
         const matchesCups = currentCupFilter === 'All' || shop.cups === Number(currentCupFilter);
@@ -477,12 +468,14 @@
         const card = document.createElement('article');
         card.className = "glass-card rounded-3xl overflow-hidden transition-all duration-500 flex flex-col justify-between group";
 
+        const drinksList = (shop.bestDrinks || []).map(d => `<span class="px-2.5 py-1 bg-espresso-900/90 border border-espresso-300/15 rounded-lg text-[10px] text-espresso-200">${d}</span>`).join('');
+
         card.innerHTML = `
           <div>
-            <!-- Image Header with Gradient Fallback -->
+            <!-- Image Header -->
             <div class="relative h-52 sm:h-60 w-full overflow-hidden bg-gradient-to-br from-espresso-800 to-espresso-950">
               <img 
-                src="${shop.image}" 
+                src="${shop.image || 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1000&q=80'}" 
                 alt="${shop.name}" 
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-90 contrast-105"
                 onerror="this.style.display='none'"
@@ -490,12 +483,12 @@
               <div class="absolute inset-0 bg-gradient-to-t from-[#1A0E08] via-transparent to-transparent"></div>
               
               <div class="absolute top-4 left-4 px-3 py-1 bg-espresso-950/80 backdrop-blur-md rounded-full text-[10px] uppercase font-bold tracking-widest text-espresso-200 border border-espresso-300/20 font-sans">
-                ${shop.neighborhood}
+                ${shop.neighborhood || 'Atlanta'}
               </div>
 
               <!-- Vector Cup Badge -->
               <div class="absolute top-4 right-4 px-3 py-1.5 bg-gradient-to-r from-espresso-800/90 to-espresso-900/90 backdrop-blur-md border border-espresso-400/30 rounded-xl shadow-lg">
-                ${renderVectorCups(shop.cups)}
+                ${renderVectorCups(shop.cups || 1)}
               </div>
             </div>
 
@@ -503,41 +496,41 @@
             <div class="p-5 sm:p-6">
               <div class="flex justify-between items-baseline mb-3">
                 <h2 class="font-serif text-xl sm:text-2xl font-bold text-white group-hover:text-espresso-300 transition-colors">${shop.name}</h2>
-                <span class="text-xs font-semibold text-espresso-400 font-sans">${shop.price}</span>
+                <span class="text-xs font-semibold text-espresso-400 font-sans">${shop.price || '$$'}</span>
               </div>
 
               <div class="mb-5 sm:mb-6">
                 <span class="block text-[10px] font-bold uppercase tracking-widest text-espresso-400 mb-1.5 font-sans">The Inspector's Field Note</span>
                 <p class="text-espresso-200/90 text-xs leading-relaxed font-mono">
-                  "${shop.review}"
+                  "${shop.review || 'No review available.'}"
                 </p>
               </div>
             </div>
           </div>
 
-          <!-- Responsive Specs Footer -->
+          <!-- Specs Footer -->
           <div class="px-5 sm:px-6 pb-5 sm:pb-6 pt-2 border-t border-espresso-300/10 space-y-3 text-xs">
             
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 sm:gap-2">
               <span class="text-espresso-400 font-medium font-sans">Atmosphere</span>
-              <span class="text-espresso-200 font-mono text-[11px] font-semibold">${shop.vibe}</span>
+              <span class="text-espresso-200 font-mono text-[11px] font-semibold">${shop.vibe || 'N/A'}</span>
             </div>
 
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 sm:gap-2">
               <span class="text-espresso-400 font-medium font-sans">Work Ergonomics</span>
-              <span class="text-espresso-200 font-mono text-[11px] font-semibold">${shop.workFriendly}</span>
+              <span class="text-espresso-200 font-mono text-[11px] font-semibold">${shop.workFriendly || 'N/A'}</span>
             </div>
 
             <div>
               <span class="block text-espresso-400 font-medium mb-1.5 font-sans">Anchor Drinks</span>
               <div class="flex flex-wrap gap-1.5 font-mono">
-                ${shop.bestDrinks.map(d => `<span class="px-2.5 py-1 bg-espresso-900/90 border border-espresso-300/15 rounded-lg text-[10px] text-espresso-200">${d}</span>`).join('')}
+                ${drinksList}
               </div>
             </div>
 
             <div class="text-[11px] font-mono text-espresso-400/60 pt-2 truncate border-t border-dashed border-espresso-300/10 flex items-center gap-1.5">
               <svg class="w-3.5 h-3.5 text-espresso-400/80 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-              <span>${shop.address}</span>
+              <span>${shop.address || 'Atlanta, GA'}</span>
             </div>
 
           </div>
@@ -549,8 +542,8 @@
 
     searchInput.addEventListener('input', renderShops);
 
-    renderNeighborhoodPills();
-    renderShops();
+    // Initial load call
+    fetchShopsFromSanity();
   </script>
 </body>
 </html>
