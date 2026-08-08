@@ -328,86 +328,40 @@
   </main>
 
   <script>
-    const shops = [
-      {
-        id: "chrome-yellow",
-        name: "Chrome Yellow Trading Co.",
-        neighborhood: "Old Fourth Ward",
-        cups: 3,
-        price: "$$",
-        image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1000&q=80",
-        vibe: "Cozy Wooden & Design-Forward",
-        workFriendly: "Quiet Seating",
-        bestDrinks: ["Cortado", "Single Origin Batch Brew"],
-        address: "501 Edgewood Ave SE, Atlanta, GA",
-        review: "An absolute masterclass in extraction consistency. Chrome Yellow blends industrial warmth with quiet, focused energy. Their Cortado showcases micro-foam precision paired with deeply layered single-origin roasts."
-      },
-      {
-        id: "portrait-coffee",
-        name: "Portrait Coffee",
-        neighborhood: "West End",
-        cups: 3,
-        price: "$$",
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=80",
-        vibe: "Warm, Vibrant & Historic",
-        workFriendly: "High Energy & Collaborative",
-        bestDrinks: ["Pour Over", "Oat Milk Latte"],
-        address: "1065 Ralph David Abernathy Blvd, Atlanta, GA",
-        review: "Housed in Historic West End, Portrait Coffee is a beacon of culture and roaster craft. Every pour over is executed with surgical clarity, honoring global coffee origins with remarkable warmth."
-      },
-      {
-        id: "perc-coffee",
-        name: "PERC Coffee",
-        neighborhood: "Virginia-Highland",
-        cups: 2,
-        price: "$$",
-        image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1000&q=80",
-        vibe: "Playful & Eclectic Lounge",
-        workFriendly: "Spacious Outdoor Patio",
-        bestDrinks: ["Matcha Latte", "Nitro Cold Brew"],
-        address: "1046 N Highland Ave NE, Atlanta, GA",
-        review: "Unapologetically bold and full of personality. PERC excels at fruit-forward light roasts and creative specialty concoctions in a colorful, sunlit Virginia-Highland setting."
-      },
-      {
-        id: "brash-coffee",
-        name: "BRASH Coffee",
-        neighborhood: "Westside",
-        cups: 3,
-        price: "$$$",
-        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=80",
-        vibe: "Minimalist Architectural Glass Box",
-        workFriendly: "Purist Focus / Fast Pace",
-        bestDrinks: ["Espresso Flight", "Flat White"],
-        address: "130 W Paces Ferry Rd NW, Atlanta, GA",
-        review: "Built inside repurposed shipping containers, BRASH is an uncompromising temple for coffee purists. Direct-trade beans sourced directly from single farmers are pulled to absolute perfection."
-      },
-      {
-        id: "spiller-park",
-        name: "Spiller Park Coffee",
-        neighborhood: "Toco Hills",
-        cups: 2,
-        price: "$$",
-        image: "https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=1000&q=80",
-        vibe: "Intimate & Nostalgic",
-        workFriendly: "Cozy Counters",
-        bestDrinks: ["Espresso & Toast Combo", "Ceremonial Matcha"],
-        address: "2929 N Druid Hills Rd, Atlanta, GA",
-        review: "Combining genuine Southern hospitality with top-tier coffee craftsmanship. Spiller Park delivers flawless milk textures paired with exceptional artisanal toasts."
-      },
-      {
-        id: "con-leche",
-        name: "Con Leche",
-        neighborhood: "Reynoldstown",
-        cups: 2,
-        price: "$$",
-        image: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1000&q=80",
-        vibe: "Warm Neighborhood Window",
-        workFriendly: "Grab-and-Go Oasis",
-        bestDrinks: ["Cortado", "Draft Cold Brew"],
-        address: "181 Flat Shoals Ave SE, Atlanta, GA",
-        review: "A streamlined espresso concept tailored for speed without sacrificing quality. The espresso extraction is rich, sweet, and beautifully balanced."
+  <script>
+    // Replace with your actual Sanity Project ID (e.g. '3x8k2p9q')
+    const SANITY_PROJECT_ID = 'cxp9yxyf'; 
+    const SANITY_DATASET = 'production';
+
+    // Sanity GROQ query fetching all published coffee shops
+    const SANITY_QUERY = encodeURIComponent('*[_type == "shop"]{ "id": _id, name, neighborhood, cups, price, "image": image.asset->url, vibe, workFriendly, bestDrinks, address, review }');
+    const SANITY_URL = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${SANITY_QUERY}`;
+
+    let shops = [];
+    let currentCupFilter = 'All';
+    let currentNeighborhoodFilter = 'All';
+
+    // Fetch shops live from Sanity
+    async function fetchShopsFromSanity() {
+      try {
+        const response = await fetch(SANITY_URL);
+        const data = await response.json();
+        
+        if (data.result && data.result.length > 0) {
+          shops = data.result;
+        } else {
+          console.log('No shops found in Sanity yet. Showing fallback data.');
+        }
+      } catch (error) {
+        console.error('Error fetching from Sanity:', error);
+      } finally {
+        renderNeighborhoodPills();
+        renderShops();
       }
-    ];
+    }
+
+    // Call fetch on initial page load
+    fetchShopsFromSanity();
 
     let currentCupFilter = 'All';
     let currentNeighborhoodFilter = 'All';
