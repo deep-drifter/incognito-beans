@@ -8,7 +8,7 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Fonts: Playfair Display, Plus Jakarta Sans, & Courier Prime (Typewriter) -->
+  <!-- Google Fonts: Playfair Display, Plus Jakarta Sans, & Courier Prime -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -63,7 +63,7 @@
     }
 
     .glass-nav {
-      background: rgba(18, 9, 4, 0.8);
+      background: rgba(18, 9, 4, 0.85);
       backdrop-filter: blur(30px);
       -webkit-backdrop-filter: blur(30px);
       border-bottom: 1px solid rgba(229, 214, 193, 0.08);
@@ -86,14 +86,14 @@
     /* Soundwave Animation */
     .bar {
       display: inline-block;
-      width: 3px;
+      width: 2.5px;
       background-color: #D2B897;
       animation: soundwave 1.2s ease-in-out infinite alternate;
     }
     .bar:nth-child(1) { height: 6px; animation-delay: 0.1s; }
-    .bar:nth-child(2) { height: 14px; animation-delay: 0.3s; }
-    .bar:nth-child(3) { height: 10px; animation-delay: 0.2s; }
-    .bar:nth-child(4) { height: 18px; animation-delay: 0.4s; }
+    .bar:nth-child(2) { height: 12px; animation-delay: 0.3s; }
+    .bar:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+    .bar:nth-child(4) { height: 14px; animation-delay: 0.4s; }
 
     @keyframes soundwave {
       0% { transform: scaleY(0.3); }
@@ -101,7 +101,7 @@
     }
 
     .playing .bar { animation-play-state: running; }
-    .paused .bar { animation-play-state: paused; height: 4px; }
+    .paused .bar { animation-play-state: paused; height: 3px; }
 
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -115,73 +115,82 @@
 
   <!-- Navigation Bar -->
   <nav class="sticky top-0 z-50 glass-nav transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-6 h-22 flex items-center justify-between py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
       
       <!-- Brand Logo -->
-      <div class="flex items-center gap-4">
-        <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-espresso-600 to-espresso-950 border border-espresso-400/30 flex items-center justify-center shadow-2xl text-xl">
-          ☕
+      <div class="flex items-center gap-3">
+        <span class="w-10 h-10 rounded-2xl bg-gradient-to-br from-espresso-600 to-espresso-950 border border-espresso-400/30 flex items-center justify-center shadow-xl text-amber-300">
+          <svg class="w-5 h-5 fill-amber-300/20 stroke-amber-300" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+            <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="2" x2="6" y2="4"></line>
+            <line x1="10" y1="2" x2="10" y2="4"></line>
+            <line x1="14" y1="2" x2="14" y2="4"></line>
+          </svg>
         </span>
         <div>
-          <span class="font-serif italic text-2xl font-bold tracking-tight text-espresso-100 block leading-none">CREMA</span>
-          <span class="text-[9px] tracking-[0.28em] font-semibold uppercase text-espresso-400">The Specialty Coffee Authority</span>
+          <span class="font-serif italic text-xl sm:text-2xl font-bold tracking-tight text-espresso-100 block leading-none">CREMA</span>
+          <span class="text-[8px] sm:text-[9px] tracking-[0.25em] font-semibold uppercase text-espresso-400 block mt-0.5">The Specialty Coffee Authority</span>
         </div>
       </div>
 
-      <!-- Music Player with Typewriter Subtitle -->
-      <div class="flex items-center gap-3 glass-pill px-4 py-2 rounded-full shadow-lg border border-espresso-300/20">
-        <button id="audioToggleBtn" onclick="toggleAudio()" class="w-8 h-8 rounded-full bg-espresso-500/20 hover:bg-espresso-500/40 text-espresso-200 flex items-center justify-center transition focus:outline-none">
-          <span id="playIcon" class="text-xs">▶</span>
-        </button>
+      <!-- Mobile-Optimized Audio Pill Player -->
+      <button id="audioToggleBtn" onclick="toggleAudio()" class="flex items-center gap-2.5 glass-pill px-3 py-2 sm:px-4 sm:py-2 rounded-full shadow-lg border border-espresso-300/20 hover:border-espresso-300/40 transition">
+        <span id="playIconContainer" class="w-6 h-6 rounded-full bg-espresso-500/30 text-espresso-200 flex items-center justify-center">
+          <svg id="playIconSvg" class="w-3 h-3 fill-espresso-200 ml-0.5" viewBox="0 0 24 24">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </span>
 
-        <div class="flex items-center gap-1 h-5 paused" id="visualizer">
+        <div class="flex items-center gap-0.5 h-4 paused" id="visualizer">
           <span class="bar rounded-full"></span>
           <span class="bar rounded-full"></span>
           <span class="bar rounded-full"></span>
           <span class="bar rounded-full"></span>
         </div>
 
-        <div class="hidden sm:block text-left text-xs pr-2">
+        <div class="hidden md:block text-left text-xs pr-1">
           <div class="text-espresso-200 font-medium leading-none">Coffeehouse Lounge</div>
-          <!-- Typewriter font applied -->
-          <div class="text-[11px] font-mono text-espresso-400/90 mt-0.5">lo-fi field ambient</div>
+          <div class="text-[10px] font-mono text-espresso-400/90 mt-0.5">lo-fi field ambient</div>
         </div>
 
         <audio id="bgAudio" loop preload="none">
           <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
         </audio>
-      </div>
+      </button>
 
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <header class="relative pt-12 pb-16 px-6 max-w-6xl mx-auto">
+  <!-- Editorial Hero Section -->
+  <header class="relative pt-8 sm:pt-12 pb-12 sm:pb-16 px-4 sm:px-6 max-w-6xl mx-auto">
     
     <!-- Hero Banner -->
-    <div class="relative w-full h-[380px] sm:h-[480px] rounded-3xl overflow-hidden mb-12 shadow-2xl border border-espresso-300/10">
+    <div class="relative w-full h-[320px] sm:h-[460px] rounded-3xl overflow-hidden mb-10 sm:mb-12 shadow-2xl border border-espresso-300/10 bg-gradient-to-br from-espresso-900 to-espresso-950">
       <img 
         src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=2000&q=80" 
         alt="Crema Specialty Coffee Atmosphere" 
         class="w-full h-full object-cover filter brightness-[0.6] contrast-[1.05]"
+        onerror="this.style.opacity='0.2'"
       />
-      <div class="absolute inset-0 bg-gradient-to-t from-[#120904] via-[#120904]/50 to-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#120904] via-[#120904]/40 to-transparent"></div>
       
-      <div class="absolute bottom-10 left-8 right-8 max-w-3xl">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-espresso-500/30 backdrop-blur-md rounded-full text-xs font-semibold text-espresso-200 uppercase tracking-widest mb-4 border border-espresso-300/20">
-          <span>📍 Inaugural Directory: Metro Atlanta</span>
+      <div class="absolute bottom-6 sm:bottom-10 left-6 sm:left-8 right-6 sm:right-8 max-w-3xl">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-espresso-500/30 backdrop-blur-md rounded-full text-[10px] sm:text-xs font-semibold text-espresso-200 uppercase tracking-widest mb-3 border border-espresso-300/20">
+          <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          <span>Inaugural Directory: Metro Atlanta</span>
         </div>
-        <h1 class="font-serif text-4xl sm:text-6xl font-normal text-white tracking-tight leading-[1.1] mb-3">
+        <h1 class="font-serif text-3xl sm:text-6xl font-normal text-white tracking-tight leading-[1.15]">
           Recognizing World-Class <span class="italic text-espresso-300">Coffee Establishments</span>
         </h1>
       </div>
     </div>
 
     <!-- Purpose Section -->
-    <div class="glass-pill p-8 sm:p-10 rounded-3xl border border-espresso-300/15 mb-12 max-w-5xl mx-auto shadow-2xl">
-      <div class="max-w-3xl mx-auto text-center space-y-4">
+    <div class="glass-pill p-6 sm:p-10 rounded-3xl border border-espresso-300/15 mb-10 sm:mb-12 max-w-5xl mx-auto shadow-2xl">
+      <div class="max-w-3xl mx-auto text-center space-y-3 sm:space-y-4">
         <h2 class="font-serif text-2xl sm:text-3xl text-espresso-100 italic">The Purpose of Crema</h2>
-        <p class="text-espresso-200/90 text-sm sm:text-base leading-relaxed font-normal">
+        <p class="text-espresso-200/90 text-xs sm:text-base leading-relaxed font-normal">
           <strong class="text-white font-semibold">CREMA</strong> was created to bring an independent, uncompromised rating standard to specialty coffee. Just as Michelin stars celebrate culinary mastery, Crema Cups evaluate establishments on drink execution, bean provenance, interior design, and genuine hospitality.
         </p>
         <p class="text-espresso-300/80 text-xs sm:text-sm leading-relaxed">
@@ -191,53 +200,62 @@
     </div>
 
     <!-- Four Pillars Section -->
-    <div class="glass-pill p-8 rounded-3xl border border-espresso-300/15 mb-12 max-w-5xl mx-auto shadow-xl">
-      <div class="text-center mb-8">
-        <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-espresso-400 block mb-1">Methodology & Transparency</span>
+    <div class="glass-pill p-6 sm:p-8 rounded-3xl border border-espresso-300/15 mb-10 sm:mb-12 max-w-5xl mx-auto shadow-xl">
+      <div class="text-center mb-6 sm:mb-8">
+        <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-espresso-400 block mb-1">Methodology & Transparency</span>
         <h3 class="font-serif text-2xl sm:text-3xl text-espresso-100">The Four Pillars of Inspection</h3>
-        <p class="text-xs text-espresso-300/80 mt-2">Our standardized evaluation criteria across every location</p>
+        <p class="text-xs text-espresso-300/80 mt-1 sm:mt-2">Our standardized evaluation criteria across every location</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-        <div class="p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
-          <div class="text-espresso-200 font-serif text-lg mb-1">01. Anchor Drinks</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-left">
+        <div class="p-4 sm:p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
+          <div class="text-espresso-200 font-serif text-base sm:text-lg mb-1">01. Anchor Drinks</div>
           <p class="text-xs text-espresso-300/80 leading-relaxed">Evaluation of core staple offerings: espresso balance, milk micro-foam quality, and batch brew consistency.</p>
         </div>
 
-        <div class="p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
-          <div class="text-espresso-200 font-serif text-lg mb-1">02. Atmosphere</div>
+        <div class="p-4 sm:p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
+          <div class="text-espresso-200 font-serif text-base sm:text-lg mb-1">02. Atmosphere</div>
           <p class="text-xs text-espresso-300/80 leading-relaxed">Aesthetic identity, lighting, acoustic warmth, seating comfort, and remote-work ergonomics.</p>
         </div>
 
-        <div class="p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
-          <div class="text-espresso-200 font-serif text-lg mb-1">03. Hospitality</div>
+        <div class="p-4 sm:p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
+          <div class="text-espresso-200 font-serif text-base sm:text-lg mb-1">03. Hospitality</div>
           <p class="text-xs text-espresso-300/80 leading-relaxed">Unpretentious barista service, order accuracy, line movement, and overall community warmth.</p>
         </div>
 
-        <div class="p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
-          <div class="text-espresso-200 font-serif text-lg mb-1">04. Menu Essentials</div>
+        <div class="p-4 sm:p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
+          <div class="text-espresso-200 font-serif text-base sm:text-lg mb-1">04. Menu Essentials</div>
           <p class="text-xs text-espresso-300/80 leading-relaxed">Alternative milk offerings, artisanal food/pastry curation, seating capacity, and accessibility.</p>
         </div>
       </div>
     </div>
 
     <!-- Rating Definitions -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-5xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 text-left max-w-5xl mx-auto">
       
-      <div class="glass-pill p-6 rounded-2xl border border-espresso-300/10 hover:border-espresso-300/30 transition">
-        <div class="text-2xl mb-2">☕</div>
+      <div class="glass-pill p-5 sm:p-6 rounded-2xl border border-espresso-300/10 hover:border-espresso-300/30 transition">
+        <div class="flex items-center gap-1.5 mb-2 text-amber-400">
+          <svg class="w-5 h-5 fill-amber-400/20 stroke-amber-400" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+        </div>
         <div class="font-bold text-espresso-100 text-sm tracking-wide">1 Cup — Recommended</div>
         <p class="text-xs text-espresso-300/80 mt-1.5 leading-relaxed">High-quality espresso execution, reliable roast profile, and a welcoming atmosphere. Worth visiting if nearby.</p>
       </div>
 
-      <div class="glass-pill p-6 rounded-2xl border border-espresso-300/10 hover:border-espresso-300/30 transition">
-        <div class="text-2xl mb-2">☕☕</div>
+      <div class="glass-pill p-5 sm:p-6 rounded-2xl border border-espresso-300/10 hover:border-espresso-300/30 transition">
+        <div class="flex items-center gap-1.5 mb-2 text-amber-400">
+          <svg class="w-5 h-5 fill-amber-400/20 stroke-amber-400" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+          <svg class="w-5 h-5 fill-amber-400/20 stroke-amber-400" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+        </div>
         <div class="font-bold text-espresso-100 text-sm tracking-wide">2 Cups — Exceptional</div>
         <p class="text-xs text-espresso-300/80 mt-1.5 leading-relaxed">Top-tier extraction precision, distinct interior aesthetic, and superb hospitality. Worth a cross-town detour.</p>
       </div>
 
-      <div class="glass-pill p-6 rounded-2xl border border-espresso-300/10 bg-gradient-to-br from-espresso-800/40 to-espresso-950/60 hover:border-espresso-300/30 transition">
-        <div class="text-2xl mb-2">☕☕☕</div>
+      <div class="glass-pill p-5 sm:p-6 rounded-2xl border border-espresso-300/10 bg-gradient-to-br from-espresso-800/40 to-espresso-950/60 hover:border-espresso-300/30 transition">
+        <div class="flex items-center gap-1.5 mb-2 text-amber-400">
+          <svg class="w-5 h-5 fill-amber-400/20 stroke-amber-400" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+          <svg class="w-5 h-5 fill-amber-400/20 stroke-amber-400" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+          <svg class="w-5 h-5 fill-amber-400/20 stroke-amber-400" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+        </div>
         <div class="font-bold text-espresso-200 text-sm tracking-wide">3 Cups — Benchmark</div>
         <p class="text-xs text-espresso-300/80 mt-1.5 leading-relaxed">World-class origin sourcing, surgical barista performance, and an unforgettable sanctuary atmosphere. Worth a dedicated trip.</p>
       </div>
@@ -245,42 +263,42 @@
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-6 pb-24">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
 
-    <!-- Search & Filter Section -->
-    <section class="glass-pill p-6 rounded-3xl shadow-2xl mb-12 sticky top-28 z-40 border border-espresso-300/15 space-y-5">
+    <!-- Search & Filter Controls -->
+    <section class="glass-pill p-4 sm:p-6 rounded-3xl shadow-2xl mb-8 sm:mb-12 sticky top-24 sm:top-28 z-40 border border-espresso-300/15 space-y-4 sm:space-y-5">
       
-      <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
+      <div class="flex flex-col lg:flex-row gap-3 sm:gap-4 items-center justify-between">
         
-        <!-- Search Input with Typewriter Font -->
+        <!-- Search Input -->
         <div class="relative w-full lg:w-1/2">
           <input
             type="text"
             id="searchInput"
-            placeholder="Search shop, vibe, or drink (e.g., Cortado, Quiet)..."
-            class="w-full pl-11 pr-4 py-3 bg-espresso-950/80 border border-espresso-300/20 rounded-2xl focus:outline-none focus:border-espresso-400 text-sm text-espresso-100 placeholder-espresso-400/60 shadow-inner font-mono"
+            placeholder="Search shop, vibe, or drink..."
+            class="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-espresso-950/80 border border-espresso-300/20 rounded-2xl focus:outline-none focus:border-espresso-400 text-xs sm:text-sm text-espresso-100 placeholder-espresso-400/60 shadow-inner font-mono"
           />
-          <svg class="w-5 h-5 absolute left-3.5 top-3.5 text-espresso-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3.5 top-3 sm:top-3.5 text-espresso-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
         </div>
 
-        <!-- Rating Filter Pills -->
+        <!-- Rating Filter Buttons -->
         <div class="flex items-center gap-2 w-full lg:w-auto overflow-x-auto no-scrollbar">
           <span class="text-xs font-semibold text-espresso-400 uppercase tracking-wider mr-1 hidden sm:inline">Rating:</span>
-          <div class="flex p-1 bg-espresso-950/90 rounded-2xl border border-espresso-300/15 text-xs">
-            <button onclick="setCupFilter('All')" id="btn-all" class="filter-btn px-4 py-2 rounded-xl font-medium text-espresso-100 bg-espresso-800/80 transition shadow-sm">All Ratings</button>
-            <button onclick="setCupFilter('3')" id="btn-3" class="filter-btn px-4 py-2 rounded-xl text-espresso-400 hover:text-espresso-100 transition">☕☕☕ (3 Cups)</button>
-            <button onclick="setCupFilter('2')" id="btn-2" class="filter-btn px-4 py-2 rounded-xl text-espresso-400 hover:text-espresso-100 transition">☕☕ (2 Cups)</button>
-            <button onclick="setCupFilter('1')" id="btn-1" class="filter-btn px-4 py-2 rounded-xl text-espresso-400 hover:text-espresso-100 transition">☕ (1 Cup)</button>
+          <div class="flex p-1 bg-espresso-950/90 rounded-2xl border border-espresso-300/15 text-xs whitespace-nowrap">
+            <button onclick="setCupFilter('All')" id="btn-all" class="filter-btn px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-medium text-espresso-100 bg-espresso-800/80 transition shadow-sm">All Ratings</button>
+            <button onclick="setCupFilter('3')" id="btn-3" class="filter-btn px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-espresso-400 hover:text-espresso-100 transition">3 Cups</button>
+            <button onclick="setCupFilter('2')" id="btn-2" class="filter-btn px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-espresso-400 hover:text-espresso-100 transition">2 Cups</button>
+            <button onclick="setCupFilter('1')" id="btn-1" class="filter-btn px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-espresso-400 hover:text-espresso-100 transition">1 Cup</button>
           </div>
         </div>
 
       </div>
 
       <!-- Neighborhood Filter Pills -->
-      <div class="pt-3 border-t border-espresso-300/10 flex items-center gap-3">
-        <span class="text-xs font-semibold text-espresso-400 uppercase tracking-wider shrink-0">Neighborhood:</span>
+      <div class="pt-2 sm:pt-3 border-t border-espresso-300/10 flex items-center gap-2 sm:gap-3">
+        <span class="text-[10px] sm:text-xs font-semibold text-espresso-400 uppercase tracking-wider shrink-0">Neighborhood:</span>
         <div id="neighborhoodPills" class="flex gap-2 overflow-x-auto no-scrollbar py-1 text-xs">
           <!-- Rendered dynamically -->
         </div>
@@ -289,13 +307,15 @@
     </section>
 
     <!-- Coffee Shop Grid -->
-    <div id="shopGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div id="shopGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
       <!-- Cards rendered dynamically -->
     </div>
 
     <!-- Shop Nomination Section -->
-    <section class="mt-20 glass-pill p-10 rounded-3xl text-center max-w-3xl mx-auto border border-espresso-300/15 shadow-2xl">
-      <span class="text-xl mb-2 block">📩</span>
+    <section class="mt-16 sm:mt-20 glass-pill p-8 sm:p-10 rounded-3xl text-center max-w-3xl mx-auto border border-espresso-300/15 shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-espresso-800/50 border border-espresso-300/20 text-amber-300 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+      </div>
       <h3 class="font-serif text-2xl text-espresso-100 mb-2">Know a Specialty Coffee Sanctuary?</h3>
       <p class="text-xs font-mono text-espresso-300/80 max-w-lg mx-auto mb-6 leading-relaxed">
         Whether you are a coffee shop owner or a passionate patron, nominate an establishment for Crema inspection.
@@ -397,20 +417,39 @@
     const neighborhoodPills = document.getElementById('neighborhoodPills');
     const bgAudio = document.getElementById('bgAudio');
     const visualizer = document.getElementById('visualizer');
-    const playIcon = document.getElementById('playIcon');
+    const playIconSvg = document.getElementById('playIconSvg');
 
     function toggleAudio() {
       if (bgAudio.paused) {
         bgAudio.play();
         visualizer.classList.remove('paused');
         visualizer.classList.add('playing');
-        playIcon.textContent = "⏸";
+        playIconSvg.innerHTML = `<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>`;
       } else {
         bgAudio.pause();
         visualizer.classList.remove('playing');
         visualizer.classList.add('paused');
-        playIcon.textContent = "▶";
+        playIconSvg.innerHTML = `<polygon points="5 3 19 12 5 21 5 3"></polygon>`;
       }
+    }
+
+    // Helper to generate vector SVG cups
+    function renderVectorCups(count) {
+      let html = '<div class="flex items-center gap-1" title="' + count + ' Cups Rating">';
+      for(let i = 1; i <= 3; i++) {
+        const isFilled = i <= count;
+        html += `
+          <svg class="w-4 h-4 ${isFilled ? 'text-amber-300 fill-amber-300/30' : 'text-espresso-700/60 fill-none'}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+            <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="2" x2="6" y2="4"></line>
+            <line x1="10" y1="2" x2="10" y2="4"></line>
+            <line x1="14" y1="2" x2="14" y2="4"></line>
+          </svg>
+        `;
+      }
+      html += '</div>';
+      return html;
     }
 
     const neighborhoods = ['All', ...new Set(shops.map(s => s.neighborhood))];
@@ -421,7 +460,7 @@
         const btn = document.createElement('button');
         const isActive = currentNeighborhoodFilter === n;
         
-        btn.className = `px-3.5 py-1.5 rounded-xl transition whitespace-nowrap font-medium ${
+        btn.className = `px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-xl transition whitespace-nowrap font-medium text-xs ${
           isActive 
             ? 'bg-espresso-300 text-espresso-950 font-semibold shadow-md' 
             : 'bg-espresso-950/60 text-espresso-300 hover:text-white hover:bg-espresso-900 border border-espresso-300/10'
@@ -482,18 +521,18 @@
       }
 
       filtered.forEach(shop => {
-        const cupEmojis = '☕'.repeat(shop.cups);
         const card = document.createElement('article');
         card.className = "glass-card rounded-3xl overflow-hidden transition-all duration-500 flex flex-col justify-between group";
 
         card.innerHTML = `
           <div>
-            <!-- Image Header -->
-            <div class="relative h-60 w-full overflow-hidden">
+            <!-- Image Header with Gradient Fallback -->
+            <div class="relative h-52 sm:h-60 w-full overflow-hidden bg-gradient-to-br from-espresso-800 to-espresso-950">
               <img 
                 src="${shop.image}" 
                 alt="${shop.name}" 
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-90 contrast-105"
+                onerror="this.style.display='none'"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-[#1A0E08] via-transparent to-transparent"></div>
               
@@ -501,19 +540,20 @@
                 ${shop.neighborhood}
               </div>
 
-              <div class="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-espresso-800 to-espresso-900 border border-espresso-400/30 rounded-xl shadow-lg text-xs font-bold text-espresso-100 tracking-wider" title="${shop.cups} Cups Rating">
-                ${cupEmojis}
+              <!-- Vector Cup Badge -->
+              <div class="absolute top-4 right-4 px-3 py-1.5 bg-gradient-to-r from-espresso-800/90 to-espresso-900/90 backdrop-blur-md border border-espresso-400/30 rounded-xl shadow-lg">
+                ${renderVectorCups(shop.cups)}
               </div>
             </div>
 
-            <!-- Card Content with Typewriter Notes -->
-            <div class="p-6">
+            <!-- Card Body -->
+            <div class="p-5 sm:p-6">
               <div class="flex justify-between items-baseline mb-3">
-                <h2 class="font-serif text-2xl font-bold text-white group-hover:text-espresso-300 transition-colors">${shop.name}</h2>
+                <h2 class="font-serif text-xl sm:text-2xl font-bold text-white group-hover:text-espresso-300 transition-colors">${shop.name}</h2>
                 <span class="text-xs font-semibold text-espresso-400 font-sans">${shop.price}</span>
               </div>
 
-              <div class="mb-6">
+              <div class="mb-5 sm:mb-6">
                 <span class="block text-[10px] font-bold uppercase tracking-widest text-espresso-400 mb-1.5 font-sans">The Inspector's Field Note</span>
                 <p class="text-espresso-200/90 text-xs leading-relaxed font-mono">
                   "${shop.review}"
@@ -522,17 +562,17 @@
             </div>
           </div>
 
-          <!-- Card Specs with Typewriter Font -->
-          <div class="px-6 pb-6 pt-2 border-t border-espresso-300/10 space-y-3 text-xs">
+          <!-- Responsive Specs Footer -->
+          <div class="px-5 sm:px-6 pb-5 sm:pb-6 pt-2 border-t border-espresso-300/10 space-y-3 text-xs">
             
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 sm:gap-2">
               <span class="text-espresso-400 font-medium font-sans">Atmosphere</span>
-              <span class="text-espresso-200 font-mono text-[11px]">${shop.vibe}</span>
+              <span class="text-espresso-200 font-mono text-[11px] font-semibold">${shop.vibe}</span>
             </div>
 
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 sm:gap-2">
               <span class="text-espresso-400 font-medium font-sans">Work Ergonomics</span>
-              <span class="text-espresso-200 font-mono text-[11px]">${shop.workFriendly}</span>
+              <span class="text-espresso-200 font-mono text-[11px] font-semibold">${shop.workFriendly}</span>
             </div>
 
             <div>
@@ -542,8 +582,9 @@
               </div>
             </div>
 
-            <div class="text-[11px] font-mono text-espresso-400/60 pt-2 truncate border-t border-dashed border-espresso-300/10">
-              📍 ${shop.address}
+            <div class="text-[11px] font-mono text-espresso-400/60 pt-2 truncate border-t border-dashed border-espresso-300/10 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-espresso-400/80 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              <span>${shop.address}</span>
             </div>
 
           </div>
