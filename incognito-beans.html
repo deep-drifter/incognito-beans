@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CREMA — The Global Standard in Specialty Coffee</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Playfair Display, Plus Jakarta Sans, & Courier Prime (Typewriter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Courier Prime"', 'monospace'],
+          },
+          colors: {
+            espresso: {
+              50: '#FAF6F0',
+              100: '#F3ECE0',
+              200: '#E5D6C1',
+              300: '#D2B897',
+              400: '#BD966E',
+              500: '#A47548',
+              600: '#875833',
+              700: '#6A4126',
+              800: '#4D2B19',
+              900: '#2A150A',
+              950: '#120904',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #120904;
+      color: #F3ECE0;
+    }
+    
+    .glass-card {
+      background: rgba(30, 16, 9, 0.65);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(229, 214, 193, 0.12);
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5);
+    }
+    
+    .glass-card:hover {
+      background: rgba(42, 21, 10, 0.85);
+      border-color: rgba(210, 184, 151, 0.3);
+      box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    .glass-nav {
+      background: rgba(18, 9, 4, 0.8);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-bottom: 1px solid rgba(229, 214, 193, 0.08);
+    }
+
+    .glass-pill {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ambient-glow-1 {
+      background: radial-gradient(circle, rgba(164, 117, 72, 0.22) 0%, rgba(0,0,0,0) 70%);
+    }
+
+    .ambient-glow-2 {
+      background: radial-gradient(circle, rgba(106, 65, 38, 0.25) 0%, rgba(0,0,0,0) 70%);
+    }
+
+    /* Soundwave Animation */
+    .bar {
+      display: inline-block;
+      width: 3px;
+      background-color: #D2B897;
+      animation: soundwave 1.2s ease-in-out infinite alternate;
+    }
+    .bar:nth-child(1) { height: 6px; animation-delay: 0.1s; }
+    .bar:nth-child(2) { height: 14px; animation-delay: 0.3s; }
+    .bar:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+    .bar:nth-child(4) { height: 18px; animation-delay: 0.4s; }
+
+    @keyframes soundwave {
+      0% { transform: scaleY(0.3); }
+      100% { transform: scaleY(1.1); }
+    }
+
+    .playing .bar { animation-play-state: running; }
+    .paused .bar { animation-play-state: paused; height: 4px; }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="font-sans antialiased relative min-h-screen selection:bg-espresso-600 selection:text-white">
+
+  <!-- Ambient Glow Backgrounds -->
+  <div class="fixed top-0 left-1/3 w-[700px] h-[700px] ambient-glow-1 rounded-full blur-3xl pointer-events-none -z-10"></div>
+  <div class="fixed top-1/2 right-0 w-[600px] h-[600px] ambient-glow-2 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="sticky top-0 z-50 glass-nav transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 h-22 flex items-center justify-between py-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-4">
+        <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-espresso-600 to-espresso-950 border border-espresso-400/30 flex items-center justify-center shadow-2xl text-xl">
+          ☕
+        </span>
+        <div>
+          <span class="font-serif italic text-2xl font-bold tracking-tight text-espresso-100 block leading-none">CREMA</span>
+          <span class="text-[9px] tracking-[0.28em] font-semibold uppercase text-espresso-400">The Specialty Coffee Authority</span>
+        </div>
+      </div>
+
+      <!-- Music Player with Typewriter Subtitle -->
+      <div class="flex items-center gap-3 glass-pill px-4 py-2 rounded-full shadow-lg border border-espresso-300/20">
+        <button id="audioToggleBtn" onclick="toggleAudio()" class="w-8 h-8 rounded-full bg-espresso-500/20 hover:bg-espresso-500/40 text-espresso-200 flex items-center justify-center transition focus:outline-none">
+          <span id="playIcon" class="text-xs">▶</span>
+        </button>
+
+        <div class="flex items-center gap-1 h-5 paused" id="visualizer">
+          <span class="bar rounded-full"></span>
+          <span class="bar rounded-full"></span>
+          <span class="bar rounded-full"></span>
+          <span class="bar rounded-full"></span>
+        </div>
+
+        <div class="hidden sm:block text-left text-xs pr-2">
+          <div class="text-espresso-200 font-medium leading-none">Coffeehouse Lounge</div>
+          <!-- Typewriter font applied -->
+          <div class="text-[11px] font-mono text-espresso-400/90 mt-0.5">lo-fi field ambient</div>
+        </div>
+
+        <audio id="bgAudio" loop preload="none">
+          <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="relative pt-12 pb-16 px-6 max-w-6xl mx-auto">
+    
+    <!-- Hero Banner -->
+    <div class="relative w-full h-[380px] sm:h-[480px] rounded-3xl overflow-hidden mb-12 shadow-2xl border border-espresso-300/10">
+      <img 
+        src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=2000&q=80" 
+        alt="Crema Specialty Coffee Atmosphere" 
+        class="w-full h-full object-cover filter brightness-[0.6] contrast-[1.05]"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#120904] via-[#120904]/50 to-transparent"></div>
+      
+      <div class="absolute bottom-10 left-8 right-8 max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-espresso-500/30 backdrop-blur-md rounded-full text-xs font-semibold text-espresso-200 uppercase tracking-widest mb-4 border border-espresso-300/20">
+          <span>📍 Inaugural Directory: Metro Atlanta</span>
+        </div>
+        <h1 class="font-serif text-4xl sm:text-6xl font-normal text-white tracking-tight leading-[1.1] mb-3">
+          Recognizing World-Class <span class="italic text-espresso-300">Coffee Establishments</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Purpose Section -->
+    <div class="glass-pill p-8 sm:p-10 rounded-3xl border border-espresso-300/15 mb-12 max-w-5xl mx-auto shadow-2xl">
+      <div class="max-w-3xl mx-auto text-center space-y-4">
+        <h2 class="font-serif text-2xl sm:text-3xl text-espresso-100 italic">The Purpose of Crema</h2>
+        <p class="text-espresso-200/90 text-sm sm:text-base leading-relaxed font-normal">
+          <strong class="text-white font-semibold">CREMA</strong> was created to bring an independent, uncompromised rating standard to specialty coffee. Just as Michelin stars celebrate culinary mastery, Crema Cups evaluate establishments on drink execution, bean provenance, interior design, and genuine hospitality.
+        </p>
+        <p class="text-espresso-300/80 text-xs sm:text-sm leading-relaxed">
+          Starting across Metro Atlanta before expanding globally, Crema serves as a trusted guide for discerning coffee lovers.
+        </p>
+      </div>
+    </div>
+
+    <!-- Four Pillars Section -->
+    <div class="glass-pill p-8 rounded-3xl border border-espresso-300/15 mb-12 max-w-5xl mx-auto shadow-xl">
+      <div class="text-center mb-8">
+        <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-espresso-400 block mb-1">Methodology & Transparency</span>
+        <h3 class="font-serif text-2xl sm:text-3xl text-espresso-100">The Four Pillars of Inspection</h3>
+        <p class="text-xs text-espresso-300/80 mt-2">Our standardized evaluation criteria across every location</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+        <div class="p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
+          <div class="text-espresso-200 font-serif text-lg mb-1">01. Anchor Drinks</div>
+          <p class="text-xs text-espresso-300/80 leading-relaxed">Evaluation of core staple offerings: espresso balance, milk micro-foam quality, and batch brew consistency.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
+          <div class="text-espresso-200 font-serif text-lg mb-1">02. Atmosphere</div>
+          <p class="text-xs text-espresso-300/80 leading-relaxed">Aesthetic identity, lighting, acoustic warmth, seating comfort, and remote-work ergonomics.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
+          <div class="text-espresso-200 font-serif text-lg mb-1">03. Hospitality</div>
+          <p class="text-xs text-espresso-300/80 leading-relaxed">Unpretentious barista service, order accuracy, line movement, and overall community warmth.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-espresso-950/50 border border-espresso-300/10">
+          <div class="text-espresso-200 font-serif text-lg mb-1">04. Menu Essentials</div>
+          <p class="text-xs text-espresso-300/80 leading-relaxed">Alternative milk offerings, artisanal food/pastry curation, seating capacity, and accessibility.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rating Definitions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-5xl mx-auto">
+      
+      <div class="glass-pill p-6 rounded-2xl border border-espresso-300/10 hover:border-espresso-300/30 transition">
+        <div class="text-2xl mb-2">☕</div>
+        <div class="font-bold text-espresso-100 text-sm tracking-wide">1 Cup — Recommended</div>
+        <p class="text-xs text-espresso-300/80 mt-1.5 leading-relaxed">High-quality espresso execution, reliable roast profile, and a welcoming atmosphere. Worth visiting if nearby.</p>
+      </div>
+
+      <div class="glass-pill p-6 rounded-2xl border border-espresso-300/10 hover:border-espresso-300/30 transition">
+        <div class="text-2xl mb-2">☕☕</div>
+        <div class="font-bold text-espresso-100 text-sm tracking-wide">2 Cups — Exceptional</div>
+        <p class="text-xs text-espresso-300/80 mt-1.5 leading-relaxed">Top-tier extraction precision, distinct interior aesthetic, and superb hospitality. Worth a cross-town detour.</p>
+      </div>
+
+      <div class="glass-pill p-6 rounded-2xl border border-espresso-300/10 bg-gradient-to-br from-espresso-800/40 to-espresso-950/60 hover:border-espresso-300/30 transition">
+        <div class="text-2xl mb-2">☕☕☕</div>
+        <div class="font-bold text-espresso-200 text-sm tracking-wide">3 Cups — Benchmark</div>
+        <p class="text-xs text-espresso-300/80 mt-1.5 leading-relaxed">World-class origin sourcing, surgical barista performance, and an unforgettable sanctuary atmosphere. Worth a dedicated trip.</p>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 pb-24">
+
+    <!-- Search & Filter Section -->
+    <section class="glass-pill p-6 rounded-3xl shadow-2xl mb-12 sticky top-28 z-40 border border-espresso-300/15 space-y-5">
+      
+      <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
+        
+        <!-- Search Input with Typewriter Font -->
+        <div class="relative w-full lg:w-1/2">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search shop, vibe, or drink (e.g., Cortado, Quiet)..."
+            class="w-full pl-11 pr-4 py-3 bg-espresso-950/80 border border-espresso-300/20 rounded-2xl focus:outline-none focus:border-espresso-400 text-sm text-espresso-100 placeholder-espresso-400/60 shadow-inner font-mono"
+          />
+          <svg class="w-5 h-5 absolute left-3.5 top-3.5 text-espresso-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+
+        <!-- Rating Filter Pills -->
+        <div class="flex items-center gap-2 w-full lg:w-auto overflow-x-auto no-scrollbar">
+          <span class="text-xs font-semibold text-espresso-400 uppercase tracking-wider mr-1 hidden sm:inline">Rating:</span>
+          <div class="flex p-1 bg-espresso-950/90 rounded-2xl border border-espresso-300/15 text-xs">
+            <button onclick="setCupFilter('All')" id="btn-all" class="filter-btn px-4 py-2 rounded-xl font-medium text-espresso-100 bg-espresso-800/80 transition shadow-sm">All Ratings</button>
+            <button onclick="setCupFilter('3')" id="btn-3" class="filter-btn px-4 py-2 rounded-xl text-espresso-400 hover:text-espresso-100 transition">☕☕☕ (3 Cups)</button>
+            <button onclick="setCupFilter('2')" id="btn-2" class="filter-btn px-4 py-2 rounded-xl text-espresso-400 hover:text-espresso-100 transition">☕☕ (2 Cups)</button>
+            <button onclick="setCupFilter('1')" id="btn-1" class="filter-btn px-4 py-2 rounded-xl text-espresso-400 hover:text-espresso-100 transition">☕ (1 Cup)</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Neighborhood Filter Pills -->
+      <div class="pt-3 border-t border-espresso-300/10 flex items-center gap-3">
+        <span class="text-xs font-semibold text-espresso-400 uppercase tracking-wider shrink-0">Neighborhood:</span>
+        <div id="neighborhoodPills" class="flex gap-2 overflow-x-auto no-scrollbar py-1 text-xs">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Coffee Shop Grid -->
+    <div id="shopGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Cards rendered dynamically -->
+    </div>
+
+    <!-- Shop Nomination Section -->
+    <section class="mt-20 glass-pill p-10 rounded-3xl text-center max-w-3xl mx-auto border border-espresso-300/15 shadow-2xl">
+      <span class="text-xl mb-2 block">📩</span>
+      <h3 class="font-serif text-2xl text-espresso-100 mb-2">Know a Specialty Coffee Sanctuary?</h3>
+      <p class="text-xs font-mono text-espresso-300/80 max-w-lg mx-auto mb-6 leading-relaxed">
+        Whether you are a coffee shop owner or a passionate patron, nominate an establishment for Crema inspection.
+      </p>
+      <a href="mailto:inspect@cremaguide.com" class="inline-block px-6 py-3 bg-espresso-300 hover:bg-espresso-200 text-espresso-950 font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-lg font-sans">
+        Nominate for Review
+      </a>
+    </section>
+
+  </main>
+
+  <script>
+    const shops = [
+      {
+        id: "chrome-yellow",
+        name: "Chrome Yellow Trading Co.",
+        neighborhood: "Old Fourth Ward",
+        cups: 3,
+        price: "$$",
+        image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1000&q=80",
+        vibe: "Cozy Wooden & Design-Forward",
+        workFriendly: "Quiet Seating",
+        bestDrinks: ["Cortado", "Single Origin Batch Brew"],
+        address: "501 Edgewood Ave SE, Atlanta, GA",
+        review: "An absolute masterclass in extraction consistency. Chrome Yellow blends industrial warmth with quiet, focused energy. Their Cortado showcases micro-foam precision paired with deeply layered single-origin roasts."
+      },
+      {
+        id: "portrait-coffee",
+        name: "Portrait Coffee",
+        neighborhood: "West End",
+        cups: 3,
+        price: "$$",
+        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=80",
+        vibe: "Warm, Vibrant & Historic",
+        workFriendly: "High Energy & Collaborative",
+        bestDrinks: ["Pour Over", "Oat Milk Latte"],
+        address: "1065 Ralph David Abernathy Blvd, Atlanta, GA",
+        review: "Housed in Historic West End, Portrait Coffee is a beacon of culture and roaster craft. Every pour over is executed with surgical clarity, honoring global coffee origins with remarkable warmth."
+      },
+      {
+        id: "perc-coffee",
+        name: "PERC Coffee",
+        neighborhood: "Virginia-Highland",
+        cups: 2,
+        price: "$$",
+        image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1000&q=80",
+        vibe: "Playful & Eclectic Lounge",
+        workFriendly: "Spacious Outdoor Patio",
+        bestDrinks: ["Matcha Latte", "Nitro Cold Brew"],
+        address: "1046 N Highland Ave NE, Atlanta, GA",
+        review: "Unapologetically bold and full of personality. PERC excels at fruit-forward light roasts and creative specialty concoctions in a colorful, sunlit Virginia-Highland setting."
+      },
+      {
+        id: "brash-coffee",
+        name: "BRASH Coffee",
+        neighborhood: "Westside",
+        cups: 3,
+        price: "$$$",
+        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=80",
+        vibe: "Minimalist Architectural Glass Box",
+        workFriendly: "Purist Focus / Fast Pace",
+        bestDrinks: ["Espresso Flight", "Flat White"],
+        address: "130 W Paces Ferry Rd NW, Atlanta, GA",
+        review: "Built inside repurposed shipping containers, BRASH is an uncompromising temple for coffee purists. Direct-trade beans sourced directly from single farmers are pulled to absolute perfection."
+      },
+      {
+        id: "spiller-park",
+        name: "Spiller Park Coffee",
+        neighborhood: "Toco Hills",
+        cups: 2,
+        price: "$$",
+        image: "https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=1000&q=80",
+        vibe: "Intimate & Nostalgic",
+        workFriendly: "Cozy Counters",
+        bestDrinks: ["Espresso & Toast Combo", "Ceremonial Matcha"],
+        address: "2929 N Druid Hills Rd, Atlanta, GA",
+        review: "Combining genuine Southern hospitality with top-tier coffee craftsmanship. Spiller Park delivers flawless milk textures paired with exceptional artisanal toasts."
+      },
+      {
+        id: "con-leche",
+        name: "Con Leche",
+        neighborhood: "Reynoldstown",
+        cups: 2,
+        price: "$$",
+        image: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1000&q=80",
+        vibe: "Warm Neighborhood Window",
+        workFriendly: "Grab-and-Go Oasis",
+        bestDrinks: ["Cortado", "Draft Cold Brew"],
+        address: "181 Flat Shoals Ave SE, Atlanta, GA",
+        review: "A streamlined espresso concept tailored for speed without sacrificing quality. The espresso extraction is rich, sweet, and beautifully balanced."
+      }
+    ];
+
+    let currentCupFilter = 'All';
+    let currentNeighborhoodFilter = 'All';
+
+    const shopGrid = document.getElementById('shopGrid');
+    const searchInput = document.getElementById('searchInput');
+    const neighborhoodPills = document.getElementById('neighborhoodPills');
+    const bgAudio = document.getElementById('bgAudio');
+    const visualizer = document.getElementById('visualizer');
+    const playIcon = document.getElementById('playIcon');
+
+    function toggleAudio() {
+      if (bgAudio.paused) {
+        bgAudio.play();
+        visualizer.classList.remove('paused');
+        visualizer.classList.add('playing');
+        playIcon.textContent = "⏸";
+      } else {
+        bgAudio.pause();
+        visualizer.classList.remove('playing');
+        visualizer.classList.add('paused');
+        playIcon.textContent = "▶";
+      }
+    }
+
+    const neighborhoods = ['All', ...new Set(shops.map(s => s.neighborhood))];
+    
+    function renderNeighborhoodPills() {
+      neighborhoodPills.innerHTML = '';
+      neighborhoods.forEach(n => {
+        const btn = document.createElement('button');
+        const isActive = currentNeighborhoodFilter === n;
+        
+        btn.className = `px-3.5 py-1.5 rounded-xl transition whitespace-nowrap font-medium ${
+          isActive 
+            ? 'bg-espresso-300 text-espresso-950 font-semibold shadow-md' 
+            : 'bg-espresso-950/60 text-espresso-300 hover:text-white hover:bg-espresso-900 border border-espresso-300/10'
+        }`;
+        btn.textContent = n === 'All' ? 'All Areas' : n;
+        btn.onclick = () => setNeighborhoodFilter(n);
+        neighborhoodPills.appendChild(btn);
+      });
+    }
+
+    function setNeighborhoodFilter(neighborhood) {
+      currentNeighborhoodFilter = neighborhood;
+      renderNeighborhoodPills();
+      renderShops();
+    }
+
+    function setCupFilter(rating) {
+      currentCupFilter = rating;
+      
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-espresso-800/80', 'text-espresso-100', 'shadow-sm');
+        btn.classList.add('text-espresso-400');
+      });
+
+      const activeBtn = document.getElementById(`btn-${rating.toLowerCase()}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-espresso-800/80', 'text-espresso-100', 'shadow-sm');
+      }
+
+      renderShops();
+    }
+
+    function renderShops() {
+      const query = searchInput.value.toLowerCase();
+
+      const filtered = shops.filter(shop => {
+        const matchesQuery = 
+          shop.name.toLowerCase().includes(query) ||
+          shop.vibe.toLowerCase().includes(query) ||
+          shop.bestDrinks.some(d => d.toLowerCase().includes(query));
+        
+        const matchesNeighborhood = currentNeighborhoodFilter === 'All' || shop.neighborhood === currentNeighborhoodFilter;
+        const matchesCups = currentCupFilter === 'All' || shop.cups === Number(currentCupFilter);
+
+        return matchesQuery && matchesNeighborhood && matchesCups;
+      });
+
+      shopGrid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        shopGrid.innerHTML = `
+          <div class="col-span-full py-20 text-center glass-pill rounded-3xl">
+            <p class="font-serif text-2xl text-espresso-200">No coffee establishments found.</p>
+            <p class="text-xs font-mono text-espresso-400 mt-2">Try adjusting your filter selections or search term.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(shop => {
+        const cupEmojis = '☕'.repeat(shop.cups);
+        const card = document.createElement('article');
+        card.className = "glass-card rounded-3xl overflow-hidden transition-all duration-500 flex flex-col justify-between group";
+
+        card.innerHTML = `
+          <div>
+            <!-- Image Header -->
+            <div class="relative h-60 w-full overflow-hidden">
+              <img 
+                src="${shop.image}" 
+                alt="${shop.name}" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-90 contrast-105"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#1A0E08] via-transparent to-transparent"></div>
+              
+              <div class="absolute top-4 left-4 px-3 py-1 bg-espresso-950/80 backdrop-blur-md rounded-full text-[10px] uppercase font-bold tracking-widest text-espresso-200 border border-espresso-300/20 font-sans">
+                ${shop.neighborhood}
+              </div>
+
+              <div class="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-espresso-800 to-espresso-900 border border-espresso-400/30 rounded-xl shadow-lg text-xs font-bold text-espresso-100 tracking-wider" title="${shop.cups} Cups Rating">
+                ${cupEmojis}
+              </div>
+            </div>
+
+            <!-- Card Content with Typewriter Notes -->
+            <div class="p-6">
+              <div class="flex justify-between items-baseline mb-3">
+                <h2 class="font-serif text-2xl font-bold text-white group-hover:text-espresso-300 transition-colors">${shop.name}</h2>
+                <span class="text-xs font-semibold text-espresso-400 font-sans">${shop.price}</span>
+              </div>
+
+              <div class="mb-6">
+                <span class="block text-[10px] font-bold uppercase tracking-widest text-espresso-400 mb-1.5 font-sans">The Inspector's Field Note</span>
+                <p class="text-espresso-200/90 text-xs leading-relaxed font-mono">
+                  "${shop.review}"
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Specs with Typewriter Font -->
+          <div class="px-6 pb-6 pt-2 border-t border-espresso-300/10 space-y-3 text-xs">
+            
+            <div class="flex justify-between items-center">
+              <span class="text-espresso-400 font-medium font-sans">Atmosphere</span>
+              <span class="text-espresso-200 font-mono text-[11px]">${shop.vibe}</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-espresso-400 font-medium font-sans">Work Ergonomics</span>
+              <span class="text-espresso-200 font-mono text-[11px]">${shop.workFriendly}</span>
+            </div>
+
+            <div>
+              <span class="block text-espresso-400 font-medium mb-1.5 font-sans">Anchor Drinks</span>
+              <div class="flex flex-wrap gap-1.5 font-mono">
+                ${shop.bestDrinks.map(d => `<span class="px-2.5 py-1 bg-espresso-900/90 border border-espresso-300/15 rounded-lg text-[10px] text-espresso-200">${d}</span>`).join('')}
+              </div>
+            </div>
+
+            <div class="text-[11px] font-mono text-espresso-400/60 pt-2 truncate border-t border-dashed border-espresso-300/10">
+              📍 ${shop.address}
+            </div>
+
+          </div>
+        `;
+
+        shopGrid.appendChild(card);
+      });
+    }
+
+    searchInput.addEventListener('input', renderShops);
+
+    renderNeighborhoodPills();
+    renderShops();
+  </script>
+</body>
+</html>
