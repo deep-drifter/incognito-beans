@@ -119,8 +119,19 @@
       border-radius: 1rem !important;
     }
     .leaflet-popup-content {
-      margin: 12px 16px !important;
+      margin: 14px 18px !important;
       font-family: 'Plus Jakarta Sans', sans-serif !important;
+      padding-right: 12px !important;
+    }
+    .leaflet-container a.leaflet-popup-close-button {
+      color: #BD966E !important;
+      padding: 10px 12px 0 0 !important;
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      transition: color 0.2s ease !important;
+    }
+    .leaflet-container a.leaflet-popup-close-button:hover {
+      color: #F3ECE0 !important;
     }
     .leaflet-container {
       background: #120904 !important;
@@ -390,7 +401,7 @@
     const visualizer = document.getElementById('visualizer');
     const playIconSvg = document.getElementById('playIconSvg');
 
-    // Helper to generate full vector SVG cups sequence for card badges
+    // Helper to generate vector SVG cups sequence for card badges
     function renderVectorCups(count) {
       let html = '<div class="flex items-center gap-1" title="' + count + ' Cups Rating">';
       for(let i = 1; i <= 3; i++) {
@@ -412,7 +423,7 @@
     // Helper to generate a single cup vector icon for map pins
     function renderSingleCupIcon() {
       return `
-        <svg class="w-3.5 h-3.5 text-amber-300 fill-amber-300/30" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="w-4 h-4 text-amber-300 fill-amber-300/30" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
           <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"></path>
           <line x1="6" y1="2" x2="6" y2="4"></line>
@@ -441,7 +452,7 @@
       L.control.zoom({ position: 'topright' }).addTo(leafletMap);
     }
 
-    // Render/Update Pins on Map using compact Number + Single Cup Pill Badge
+    // Render/Update Pins on Map using uniform single-cup pin
     function updateMapMarkers(filteredShops) {
       if (!leafletMap) return;
 
@@ -460,12 +471,11 @@
         if (coords[0] && coords[1]) {
           bounds.push(coords);
 
-          // Compact Map Pin Badge (Number + Single Vector Cup Icon)
+          // Uniform Minimal Map Pin (Single Cup Icon)
           const customIcon = L.divIcon({
             className: 'custom-map-pin',
             html: `
-              <div class="px-2.5 py-1 bg-espresso-950/95 border border-amber-400/50 rounded-full shadow-2xl flex items-center gap-1 text-amber-300 font-bold text-xs transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-all font-mono">
-                <span>${shop.cups || 1}</span>
+              <div class="w-8 h-8 rounded-full bg-espresso-950/95 border border-amber-400/60 shadow-2xl flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform">
                 ${renderSingleCupIcon()}
               </div>
             `,
