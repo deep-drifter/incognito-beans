@@ -8,6 +8,10 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Leaflet CSS & JS (Interactive Map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <!-- Google Fonts: Playfair Display, Plus Jakarta Sans, & Courier Prime -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -105,6 +109,22 @@
 
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Custom Leaflet Map Dark Styling */
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+      background: rgba(26, 14, 8, 0.92) !important;
+      backdrop-filter: blur(16px) !important;
+      color: #F3ECE0 !important;
+      border: 1px solid rgba(210, 184, 151, 0.25) !important;
+      border-radius: 1rem !important;
+    }
+    .leaflet-popup-content {
+      margin: 12px 16px !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+    }
+    .leaflet-container {
+      background: #120904 !important;
+    }
   </style>
 </head>
 <body class="font-sans antialiased relative min-h-screen selection:bg-espresso-600 selection:text-white">
@@ -163,7 +183,7 @@
   </nav>
 
   <!-- Editorial Hero Section -->
-  <header class="relative pt-8 sm:pt-12 pb-12 sm:pb-16 px-4 sm:px-6 max-w-6xl mx-auto">
+  <header class="relative pt-8 sm:pt-12 pb-8 sm:pb-12 px-4 sm:px-6 max-w-6xl mx-auto">
     
     <!-- Hero Banner -->
     <div class="relative w-full h-[320px] sm:h-[460px] rounded-3xl overflow-hidden mb-10 sm:mb-12 shadow-2xl border border-espresso-300/10 bg-gradient-to-br from-espresso-900 to-espresso-950">
@@ -306,6 +326,18 @@
 
     </section>
 
+    <!-- Interactive Dark Mode Map Container -->
+    <section class="mb-10 sm:mb-12">
+      <div class="flex items-center justify-between mb-3 px-1">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          <h2 class="font-serif text-xl sm:text-2xl text-espresso-100">Regional Explorer</h2>
+        </div>
+        <span class="text-xs font-mono text-espresso-400">Interactive Directory</span>
+      </div>
+      <div id="map" class="w-full h-80 sm:h-96 rounded-3xl border border-espresso-300/20 overflow-hidden shadow-2xl z-10"></div>
+    </section>
+
     <!-- Coffee Shop Grid -->
     <div id="shopGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
       <!-- Cards rendered dynamically -->
@@ -331,13 +363,28 @@
     const SANITY_PROJECT_ID = 'cxp9yxyf'; 
     const SANITY_DATASET = 'production';
 
-    // GROQ Query to pull all published shop documents from Sanity
-    const SANITY_QUERY = encodeURIComponent('*[_type == "shop"]{ "id": _id, name, neighborhood, cups, price, "image": image.asset->url, vibe, workFriendly, bestDrinks, address, review }');
+    // GROQ Query to pull published shops including coordinates if available
+    const SANITY_QUERY = encodeURIComponent('*[_type == "shop"]{ "id": _id, name, neighborhood, cups, price, "image": image.asset->url, vibe, workFriendly, bestDrinks, address, review, lat, lng }');
     const SANITY_URL = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${SANITY_QUERY}`;
+
+    // Geolocation fallbacks for Atlanta neighborhoods
+    const NEIGHBORHOOD_COORDS = {
+      'Old Fourth Ward': [33.7547, -84.3725],
+      'West End': [33.7381, -84.4253],
+      'Virginia-Highland': [33.7825, -84.3547],
+      'Westside': [33.7861, -84.4121],
+      'Toco Hills': [33.8182, -84.3128],
+      'Reynoldstown': [33.7482, -84.3575],
+      'Decatur': [33.7748, -84.2963],
+      'Inman Park': [33.7583, -84.3582],
+      'Midtown': [33.7810, -84.3832]
+    };
 
     let shops = [];
     let currentCupFilter = 'All';
     let currentNeighborhoodFilter = 'All';
+    let leafletMap = null;
+    let mapMarkers = [];
 
     const shopGrid = document.getElementById('shopGrid');
     const searchInput = document.getElementById('searchInput');
@@ -345,6 +392,78 @@
     const bgAudio = document.getElementById('bgAudio');
     const visualizer = document.getElementById('visualizer');
     const playIconSvg = document.getElementById('playIconSvg');
+
+    // Initialize Leaflet Map
+    function initMap() {
+      if (leafletMap) return;
+      
+      // Center map over Metro Atlanta
+      leafletMap = L.map('map', {
+        zoomControl: false
+      }).setView([33.7650, -84.3700], 12);
+
+      // CartoDB Dark Matter tiles
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+        maxZoom: 19
+      }).addTo(leafletMap);
+
+      // Add small zoom control in top right
+      L.control.zoom({ position: 'topright' }).addTo(leafletMap);
+    }
+
+    // Render/Update Pins on Map based on filtered shops
+    function updateMapMarkers(filteredShops) {
+      if (!leafletMap) return;
+
+      // Clear existing markers
+      mapMarkers.forEach(m => leafletMap.removeLayer(m));
+      mapMarkers = [];
+
+      const bounds = [];
+
+      filteredShops.forEach(shop => {
+        let coords = [shop.lat, shop.lng];
+        if (!shop.lat || !shop.lng) {
+          coords = NEIGHBORHOOD_COORDS[shop.neighborhood] || [33.7490, -84.3880];
+        }
+
+        if (coords[0] && coords[1]) {
+          bounds.push(coords);
+
+          // Custom Icon
+          const customIcon = L.divIcon({
+            className: 'custom-map-pin',
+            html: `
+              <div class="w-8 h-8 rounded-full bg-espresso-950 border-2 border-amber-400 text-amber-300 flex items-center justify-center font-bold text-xs shadow-xl transform hover:scale-110 transition">
+                ☕${shop.cups}
+              </div>
+            `,
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+          });
+
+          const marker = L.marker(coords, { icon: customIcon }).addTo(leafletMap);
+          
+          const popupContent = `
+            <div class="w-48 text-xs font-sans space-y-1.5">
+              <div class="font-bold text-amber-300 text-sm font-serif">${shop.name}</div>
+              <div class="text-espresso-300 font-mono text-[10px] uppercase">${shop.neighborhood} • ${'☕'.repeat(shop.cups)}</div>
+              <p class="text-espresso-200/90 text-[11px] leading-tight line-clamp-2">${shop.review || ''}</p>
+              <a href="https://maps.google.com/?q=${encodeURIComponent(shop.name + ' ' + (shop.address || 'Atlanta'))}" target="_blank" class="inline-block mt-1 text-[10px] text-amber-400 underline font-mono">Open Directions →</a>
+            </div>
+          `;
+
+          marker.bindPopup(popupContent);
+          mapMarkers.push(marker);
+        }
+      });
+
+      // Auto-fit map boundaries if markers exist
+      if (bounds.length > 0) {
+        leafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+      }
+    }
 
     // Fetch live shops from Sanity API
     async function fetchShopsFromSanity() {
@@ -354,8 +473,6 @@
         
         if (data.result && data.result.length > 0) {
           shops = data.result;
-        } else {
-          console.log('No shops found in Sanity yet.');
         }
       } catch (error) {
         console.error('Error fetching from Sanity:', error);
@@ -461,6 +578,7 @@
             <p class="text-xs font-mono text-espresso-400 mt-2">Try adjusting your filter selections or search term.</p>
           </div>
         `;
+        updateMapMarkers([]);
         return;
       }
 
@@ -538,11 +656,15 @@
 
         shopGrid.appendChild(card);
       });
+
+      // Synchronize map pins
+      updateMapMarkers(filtered);
     }
 
     searchInput.addEventListener('input', renderShops);
 
-    // Initial load call
+    // Startup sequence
+    initMap();
     fetchShopsFromSanity();
   </script>
 </body>
