@@ -1,0 +1,5 @@
+# Search engines and AI assistants are welcome to read CREMA.
+User-agent: *
+Allow: /
+
+Sitemap: https://incognito-beans.vercel.app/sitemap.xml

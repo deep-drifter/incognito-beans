@@ -3,10 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>CREMA — The Metro Atlanta Coffee Guide</title>
-  <meta name="description" content="An independent guide to the best coffee in metro Atlanta, rated in cups.">
-  <meta property="og:title" content="CREMA — The Metro Atlanta Coffee Guide">
-  <meta property="og:description" content="An independent guide to the best coffee in metro Atlanta, rated in cups.">
+  <title>CREMA — The Global Standard in Specialty Coffee</title>
+  <meta name="description" content="CREMA is an independent guide to the world’s best coffee shops, rated in cups for what’s in the cup and how you’re treated. Now rating Atlanta.">
+  <!-- When you move to your own domain, change every incognito-beans.vercel.app below (and in robots.txt / sitemap.xml). -->
+  <link rel="canonical" href="https://incognito-beans.vercel.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CREMA">
+  <meta property="og:url" content="https://incognito-beans.vercel.app/">
+  <meta property="og:title" content="CREMA — The Global Standard in Specialty Coffee">
+  <meta property="og:description" content="An independent guide to the world’s best coffee shops, rated in cups. Now rating Atlanta.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1200&h=630&q=75">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="CREMA">
   <meta name="theme-color" content="#F5F0E8" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#17110D" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%232A1E16'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23E0A36F' stroke-width='2.5'/%3E%3Ccircle cx='16' cy='16' r='3.5' fill='%23E0A36F'/%3E%3C/svg%3E">
@@ -21,14 +31,39 @@
     })();
   </script>
 
-  <!-- Fonts: Fraunces for display. Apple devices use SF Pro for text; everyone else gets Inter. -->
+  <!-- Brand fonts: Playfair Display (headers) + Plus Jakarta Sans (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400..700&display=swap">
+  <!-- Warm up connections the page will need -->
+  <link rel="preconnect" href="https://cxp9yxyf.apicdn.sanity.io" crossorigin>
+  <link rel="preconnect" href="https://cdn.sanity.io">
+  <link rel="dns-prefetch" href="https://tiles.openfreemap.org">
+  <!-- The map library (MapLibre GL) loads only when the map is about to scroll into view — see loadMapLibrary() -->
 
-  <!-- Map: MapLibre GL (free, open source). Tiles: OpenFreeMap (free, no API key). -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css">
-  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+  <!-- Tells Google and AI assistants what CREMA is -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://incognito-beans.vercel.app/#org",
+        "name": "CREMA",
+        "url": "https://incognito-beans.vercel.app/",
+        "logo": "https://incognito-beans.vercel.app/icon-512.png",
+        "description": "An independent guide to the world’s best coffee shops, rated in cups: Selection, 1 Cup, 2 Cups and 3 Cups."
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://incognito-beans.vercel.app/#site",
+        "name": "CREMA",
+        "url": "https://incognito-beans.vercel.app/",
+        "publisher": { "@id": "https://incognito-beans.vercel.app/#org" }
+      }
+    ]
+  }
+  </script>
 
   <style>
     /* =====================================================================
@@ -53,8 +88,8 @@
                       0 18px 40px -18px rgba(70, 40, 20, .45), 0 2px 8px rgba(70, 40, 20, .08);
       --pin-strong-bg: #2A1E16;
       --pin-strong-fg: #F6E7D2;
-      --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
-      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+      --serif: "Playfair Display", "Iowan Old Style", Georgia, serif;
+      --sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --radius: 20px;
       --gutter: clamp(16px, 4vw, 40px);
       --max: 1200px;
@@ -87,7 +122,7 @@
     img { max-width: 100%; display: block; }
     a { color: inherit; }
     button { font: inherit; color: inherit; }
-    h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; text-wrap: balance; letter-spacing: -.015em; }
+    h1, h2, h3 { font-family: var(--serif); font-weight: 500; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
     p { margin: 0; }
     :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
     ::selection { background: var(--accent); color: var(--accent-ink); }
@@ -111,8 +146,7 @@
                    -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); border-bottom: 1px solid var(--line); }
     .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .brand svg { width: 30px; height: 30px; flex: none; }
-    .brand b { font: 500 22px/1 var(--serif); letter-spacing: .04em; }
-    .brand small { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2); margin-top: 3px; }
+    .brand b { font: 700 23px/1 var(--serif); letter-spacing: .08em; }
     .nav-links { display: flex; gap: 22px; margin-left: auto; font-size: 14.5px; font-weight: 500; }
     .nav-tools { display: flex; align-items: center; gap: 10px; }
     .nav-links a { text-decoration: none; color: var(--ink-2); }
@@ -125,7 +159,7 @@
     /* ---------- Hero ---------- */
     .hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center;
             padding-block: clamp(32px, 6vw, 72px) clamp(32px, 5vw, 56px); }
-    .hero h1 { font-size: clamp(42px, 6.2vw, 76px); line-height: 1; font-weight: 350; }
+    .hero h1 { font-size: clamp(42px, 6vw, 74px); line-height: 1.04; font-weight: 400; }
     .hero h1 em { font-style: italic; color: var(--accent); }
     .hero .lede { font-size: clamp(17px, 1.6vw, 19px); color: var(--ink-2); max-width: 44ch; margin-top: 22px; }
     .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
@@ -139,7 +173,7 @@
     .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
     .hero-caption { position: absolute; left: 16px; right: 16px; bottom: 16px; border-radius: 20px; padding: 14px 18px;
                     display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--ink); }
-    .hero-caption b { font: 500 18px/1.2 var(--serif); display: block; }
+    .hero-caption b { font: 600 18px/1.2 var(--serif); display: block; }
     .hero-caption span { font-size: 13px; color: var(--ink-2); }
     .hero-caption .cups-row { color: var(--accent); display: flex; gap: 2px; }
     .hero-caption .cups-row svg { width: 18px; height: 18px; }
@@ -155,14 +189,16 @@
     .section-head p { color: var(--ink-2); max-width: 52ch; margin-top: 8px; }
 
     /* ---------- Search + filters ---------- */
-    .finder { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin-bottom: 20px; }
+    /* The search + filters float with you (glass) while you're in the guide */
+    .finder { position: sticky; top: 78px; z-index: 40; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px;
+              margin-bottom: 20px; padding: 12px; border-radius: 28px; }
     .search { position: relative; }
     .search svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--ink-2); pointer-events: none; }
-    .search input { width: 100%; height: 54px; padding: 0 20px 0 48px; border-radius: 999px; border: 1px solid var(--line);
-                    background: var(--surface); color: var(--ink); font: 400 16px var(--sans); box-shadow: var(--shadow); }
+    .search input { width: 100%; height: 52px; padding: 0 20px 0 48px; border-radius: 999px; border: 1px solid var(--line);
+                    background: var(--surface); color: var(--ink); font: 400 16px var(--sans); }
     .search input::placeholder { color: var(--ink-2); opacity: .85; }
     .search input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
-    .filter-row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding-inline: 4px; }
     .filter-group { display: flex; align-items: center; gap: 8px; min-width: 0; }
     .filter-group > .label { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); flex: none; }
     .seg { display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--surface-2); overflow-x: auto; scrollbar-width: none; min-width: 0; }
@@ -176,7 +212,17 @@
                     font-size: 13.5px; color: var(--ink-2); cursor: pointer; white-space: nowrap; }
     .pills button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
     .hood-group { flex: 1 1 100%; }
-    @media (max-width: 520px) { .filter-group > .label { display: none; } }
+    @media (max-width: 700px) {
+      /* Phones: one swipeable row of filters so the floating bar stays small */
+      .finder { top: 72px; padding: 10px; gap: 10px; border-radius: 24px; }
+      .search input { height: 46px; }
+      .filter-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 8px; padding-inline: 0; }
+      .filter-row::-webkit-scrollbar { display: none; }
+      .filter-group { flex: none; }
+      .filter-group > .label { display: none; }
+      .seg, .pills { overflow: visible; }
+      .hood-group { flex: none; }
+    }
     .result-line { font-size: 14px; color: var(--ink-2); }
     .result-line button { border: 0; background: none; color: var(--accent); font-weight: 600; cursor: pointer; padding: 0; margin-left: 8px; }
 
@@ -216,7 +262,7 @@
     .map-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
     .map-card h3 { font-size: 21px; line-height: 1.15; padding-right: 28px; }
     .map-card .meta { margin-top: 4px; }
-    .map-card .note { grid-column: 1 / -1; font: italic 400 15px/1.5 var(--serif); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .map-card .note { grid-column: 1 / -1; font: 400 14.5px/1.55 var(--sans); color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .map-card .actions { grid-column: 1 / -1; display: flex; gap: 8px; }
     .map-card .actions > * { flex: 1; }
     .map-card .close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; border: 0; background: var(--surface-2);
@@ -233,7 +279,7 @@
     /* ---------- Shop grid ---------- */
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 22px; margin-top: 32px; }
     .shop { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-            overflow: hidden; transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease; scroll-margin-top: 90px; }
+            overflow: hidden; transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease; scroll-margin-top: 240px; }
     .shop:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
     .shop.flash { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
     .shop .photo { position: relative; aspect-ratio: 16 / 10; background: linear-gradient(145deg, #C9895B, #5A331F); overflow: hidden; }
@@ -242,8 +288,11 @@
     .photo-fallback { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255, 240, 220, .75); }
     .photo-fallback svg { width: 56px; height: 56px; }
     .shop .body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
-    .shop h3 { font-size: 25px; line-height: 1.1; }
-    .shop .note { font: italic 400 16px/1.55 var(--serif); color: var(--ink); }
+    .shop h3 { font-size: 26px; line-height: 1.12; }
+    .approx { font-size: 12.5px; color: var(--ink-2); }
+    .city-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; font-size: 14px; color: var(--ink-2); }
+    .city-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; background: var(--ink); color: var(--bg); font-weight: 600; font-size: 13px; }
+    .shop .note { font: 400 15.5px/1.65 var(--sans); color: var(--ink); }
     .shop .note.clamp { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
     .more { align-self: flex-start; border: 0; background: none; padding: 0; color: var(--accent); font-size: 13.5px; font-weight: 600; cursor: pointer; }
     .facts { display: grid; gap: 6px; margin: 0; font-size: 14px; }
@@ -273,7 +322,7 @@
     .ladder .award svg { width: 20px; height: 20px; }
     .ladder h3 { font-size: 24px; }
     .ladder p { color: var(--ink-2); font-size: 15px; }
-    .ladder .worth { font: italic 400 16px/1.4 var(--serif); color: var(--ink); }
+    .ladder .worth { font: italic 400 18px/1.35 var(--serif); color: var(--ink); }
     @media (max-width: 900px) {
       .ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .ladder > div:nth-child(3) { border-left: 0; }
@@ -338,7 +387,7 @@
     <div class="wrap nav-inner">
       <a class="brand" href="#top" aria-label="CREMA home">
         <svg><use href="#i-mark"/></svg>
-        <span><b>CREMA</b><small>Metro Atlanta</small></span>
+        <b>CREMA</b>
       </a>
       <nav class="nav-links" aria-label="Sections">
         <a href="#guide">The Guide</a>
@@ -363,9 +412,9 @@
     <!-- Hero -->
     <section class="wrap hero">
       <div>
-        <span class="eyebrow">The Metro Atlanta Guide · 2026</span>
+        <span class="eyebrow">The CREMA Guide · Now rating Atlanta</span>
         <h1 style="margin-top:18px">Coffee worth <em>crossing town</em> for.</h1>
-        <p class="lede">An independent guide to the best coffee in metro Atlanta. Every shop is rated in cups for what’s in the cup and how you’re treated — the vibe, the Wi-Fi and the price are here to help you choose.</p>
+        <p class="lede">An independent guide to the world’s best coffee shops. Every shop is rated in cups for what’s in the cup and how you’re treated — the vibe, the Wi-Fi and the price are here to help you choose. Our first city is Atlanta.</p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="#guide">Explore the guide</a>
           <a class="btn btn-quiet" href="#how-we-rate">How we rate</a>
@@ -387,15 +436,16 @@
         <div>
           <span class="eyebrow">The Guide</span>
           <h2 id="guideTitle" style="margin-top:10px">Find your next cup</h2>
+          <div class="city-line"><span class="city-chip" id="cityChip">Atlanta</span><span>More cities coming soon</span></div>
         </div>
         <p class="result-line" id="resultLine" aria-live="polite">Loading shops…</p>
       </div>
 
-      <div class="finder">
+      <div class="finder glass" id="finder">
         <label class="search">
           <span class="sr-only">Search shops</span>
           <svg aria-hidden="true"><use href="#i-search"/></svg>
-          <input id="searchInput" type="search" autocomplete="off" placeholder="Search shops, drinks, vibes — try “matcha”">
+          <input id="searchInput" type="search" autocomplete="off" placeholder="Search shops, drinks, vibes…">
         </label>
         <div class="filter-row">
           <div class="filter-group">
@@ -494,7 +544,7 @@
       <div class="nominate">
         <div>
           <h2>Know a shop we should visit?</h2>
-          <p>Owners and regulars can both nominate. Tell us the shop, the neighborhood, and what to order.</p>
+          <p>Owners and regulars anywhere in the world can nominate. Tell us the shop, the city, and what to order.</p>
         </div>
         <a class="btn" href="mailto:inspect@cremaguide.com?subject=Nomination%20for%20CREMA">Nominate a shop</a>
       </div>
@@ -502,7 +552,7 @@
   </main>
 
   <footer class="wrap">
-    <span>© <span id="year">2026</span> CREMA · An independent coffee guide</span>
+    <span>© <span id="year">2026</span> CREMA · The Global Standard in Specialty Coffee</span>
     <span>Map © <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors</span>
   </footer>
 
@@ -524,8 +574,29 @@
     "id": _id, name, neighborhood, cups, award, price,
     "image": image.asset->url,
     vibe, workFriendly, bestDrinks, address, review,
-    lat, lng, location
+    lat, lng, location, coordinates, city
   }`;
+
+  // Every shop belongs to a city. Until shops have a "city" field in Sanity, they're all Atlanta.
+  const DEFAULT_CITY = 'Atlanta';
+
+  // Where each pin goes, in order of preference:
+  //  1. Coordinates saved in Sanity (a "coordinates" field like "33.7540, -84.3711", or lat/lng, or a geopoint)
+  //  2. PINNED_COORDS below — exact spots for shops that don't have coordinates in Sanity yet
+  //  3. The neighborhood's center (shown as "approximate location")
+  const PINNED_COORDS = {
+    'portrait coffee': [33.73838, -84.42279],              // 1065 Ralph David Abernathy Blvd
+    'perc coffee': [33.78321, -84.35474],                  // 1046 N Highland Ave NE
+    'chrome yellow trading co.': [33.75401, -84.37109]     // 501 Edgewood Ave SE
+  };
+  const NEIGHBORHOOD_CENTERS = {
+    'old fourth ward': [33.7547, -84.3725], 'west end': [33.7381, -84.4253], 'virginia-highland': [33.7825, -84.3547],
+    'westside': [33.7861, -84.4121], 'toco hills': [33.8182, -84.3128], 'reynoldstown': [33.7482, -84.3575],
+    'decatur': [33.7748, -84.2963], 'inman park': [33.7583, -84.3582], 'midtown': [33.7810, -84.3832],
+    'buckhead': [33.8390, -84.3800], 'cabbagetown': [33.7496, -84.3620], 'grant park': [33.7370, -84.3700],
+    'east atlanta': [33.7400, -84.3450], 'kirkwood': [33.7530, -84.3280], 'poncey-highland': [33.7730, -84.3530],
+    'downtown': [33.7550, -84.3900], 'castleberry hill': [33.7490, -84.4020], 'summerhill': [33.7390, -84.3830]
+  };
 
   // Today, a shop with an empty "cups" field shows as ✦ Selection (same as before), so none of
   // your existing shops disappear. Once you add the "award" field in Sanity, set this to false:
@@ -585,8 +656,8 @@
 
   const isApple = /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
   function directionsUrl(s) {
-    const q = s.address ? `${s.name}, ${s.address}` : `${s.name}, ${s.neighborhood || 'Atlanta'}, GA`;
-    if (isApple) return `https://maps.apple.com/?q=${encodeURIComponent(s.name)}` + (s.hasCoords ? `&ll=${s.lat},${s.lng}` : `&address=${encodeURIComponent(q)}`);
+    const q = s.address ? `${s.name}, ${s.address}` : [s.name, s.neighborhood, s.city].filter(Boolean).join(', ');
+    if (isApple) return `https://maps.apple.com/?q=${encodeURIComponent(s.name)}` + (s.hasCoords && !s.approx ? `&ll=${s.lat},${s.lng}` : `&address=${encodeURIComponent(q)}`);
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
   }
 
@@ -601,17 +672,17 @@
     else if (typeof raw.cups === 'number' && !Number.isNaN(raw.cups)) award = Math.max(0, Math.min(3, Math.round(raw.cups)));
     else if (EMPTY_CUPS_MEANS_SELECTION) award = 0;
 
-    const lat = Number(raw.location?.lat ?? raw.lat);
-    const lng = Number(raw.location?.lng ?? raw.lng);
-    const hasCoords = Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180 && !(lat === 0 && lng === 0);
-
+    const name = (raw.name || 'Untitled shop').trim();
     const neighborhood = typeof raw.neighborhood === 'string' ? raw.neighborhood.trim() : '';
+    const { lat, lng, approx } = findCoords(raw, name, neighborhood);
+    const hasCoords = lat !== null;
+    const city = typeof raw.city === 'string' && raw.city.trim() ? raw.city.trim() : (raw.city?.name || DEFAULT_CITY);
     const price = typeof raw.price === 'string' ? raw.price.trim() : '';
     const drinks = Array.isArray(raw.bestDrinks) ? raw.bestDrinks.filter((d) => typeof d === 'string' && d.trim()) : [];
 
     return {
       id: String(raw.id),
-      name: (raw.name || 'Untitled shop').trim(),
+      name, city,
       award, neighborhood, price,
       priceLevel: (price.match(/\$/g) || []).length || null,
       image: raw.image || null,
@@ -620,8 +691,23 @@
       drinks,
       address: typeof raw.address === 'string' ? raw.address.trim() : '',
       review: typeof raw.review === 'string' ? raw.review.trim() : '',
-      lat, lng, hasCoords
+      lat, lng, hasCoords, approx
     };
+  }
+
+  const validPair = (lat, lng) => Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180 && !(lat === 0 && lng === 0);
+  function findCoords(raw, name, neighborhood) {
+    const candidates = [
+      [Number(raw.location?.lat), Number(raw.location?.lng)],
+      [Number(raw.lat), Number(raw.lng)],
+      typeof raw.coordinates === 'string' ? raw.coordinates.split(',').map((n) => Number(n.trim())) : [NaN, NaN]
+    ];
+    for (const [lat, lng] of candidates) if (validPair(lat, lng)) return { lat, lng, approx: false };
+    const pinned = PINNED_COORDS[name.toLowerCase()];
+    if (pinned) return { lat: pinned[0], lng: pinned[1], approx: false };
+    const center = NEIGHBORHOOD_CENTERS[neighborhood.toLowerCase()];
+    if (center) return { lat: center[0], lng: center[1], approx: true };
+    return { lat: null, lng: null, approx: false };
   }
 
   async function fetchShops() {
@@ -630,8 +716,8 @@
     if (!res.ok) throw new Error(`Sanity responded ${res.status}`);
     const data = await res.json();
     const all = (data.result || []).map(normalize);
-    const missing = all.filter((s) => !s.hasCoords).map((s) => s.name);
-    if (missing.length) console.warn('[CREMA] These shops have no coordinates, so they are not on the map:', missing.join(', '));
+    const missing = all.filter((s) => !s.hasCoords || s.approx).map((s) => s.name);
+    if (missing.length) console.warn('[CREMA] Add coordinates in Sanity for:', missing.join(', '));
     return all.filter((s) => s.award !== null);
   }
 
@@ -782,8 +868,8 @@
           h('div', { class: 'chips' }, s.drinks.map((d) => h('span', { text: d })))) : null,
         h('div', { class: 'actions' },
           h('a', { class: 'btn btn-quiet btn-sm', href: directionsUrl(s), target: '_blank', rel: 'noopener noreferrer', text: 'Directions' }),
-          h('button', { class: 'btn btn-primary btn-sm', type: 'button', disabled: !s.hasCoords, text: s.hasCoords ? 'Show on map' : 'Map pin coming',
-            onclick: () => { $('#mapWrap').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' }); openMapCard(s); } })
+          s.hasCoords ? h('button', { class: 'btn btn-primary btn-sm', type: 'button', text: 'Show on map',
+            onclick: () => { $('#mapWrap').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' }); openMapCard(s); } }) : null
         )
       )
     );
@@ -855,9 +941,29 @@
     return style;
   }
 
+  // Load MapLibre (~250 KB) only when the map is about to scroll into view, so the page opens fast.
+  const MAPLIBRE = 'https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl';
+  function loadMapLibrary() {
+    return new Promise((resolve, reject) => {
+      if (window.maplibregl) return resolve();
+      document.head.append(h('link', { rel: 'stylesheet', href: `${MAPLIBRE}.css` }));
+      const sc = h('script', { src: `${MAPLIBRE}.js`, async: true });
+      sc.onload = resolve; sc.onerror = reject;
+      document.head.append(sc);
+    });
+  }
+  function initMapWhenNear() {
+    const target = $('#mapWrap');
+    if (!('IntersectionObserver' in window)) return initMap();
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); initMap(); }
+    }, { rootMargin: '800px 0px' });
+    io.observe(target);
+  }
+
   async function initMap() {
     const status = $('#mapStatus');
-    if (!window.maplibregl) { status.textContent = 'The map couldn’t load. The list below still works.'; return; }
+    try { await loadMapLibrary(); } catch (e) { status.textContent = 'The map couldn’t load. The list below still works.'; return; }
     try {
       baseStyle = await fetch(MAP_STYLE_URL).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
     } catch (e) {
@@ -903,13 +1009,15 @@
       markers.set(s.id, { marker, el, wrap, shop: s });
     });
 
-    if (fit && visible.length) {
+    if (fit) {
       const narrow = innerWidth < 640;
-      if (visible.length === 1) map.jumpTo({ center: [visible[0].lng, visible[0].lat], zoom: 14 });
+      const dur = reduceMotion ? 0 : 700;
+      if (!visible.length) map.easeTo({ center: ATLANTA, zoom: 11, duration: dur });
+      else if (visible.length === 1) map.easeTo({ center: [visible[0].lng, visible[0].lat], zoom: 14, duration: dur });
       else {
         const b = new maplibregl.LngLatBounds();
         visible.forEach((s) => b.extend([s.lng, s.lat]));
-        map.fitBounds(b, { padding: narrow ? 50 : { top: 70, bottom: 70, left: 70, right: 90 }, maxZoom: 14, duration: reduceMotion ? 0 : 700 });
+        map.fitBounds(b, { padding: narrow ? 50 : { top: 70, bottom: 70, left: 70, right: 90 }, maxZoom: 14, duration: dur });
       }
     }
   }
@@ -920,7 +1028,8 @@
     markers.forEach((m) => { const on = m.shop.id === s.id; m.el.classList.toggle('active', on); m.wrap.style.zIndex = on ? 10 : ''; });
     $('#mapCardTitle').textContent = s.name;
     $('#mapCardMeta').replaceChildren(awardEl(s.award), ...(s.neighborhood ? [h('span', { class: 'dot', text: s.neighborhood })] : []),
-      ...(s.price ? [h('span', { class: 'dot', text: s.price })] : []));
+      ...(s.price ? [h('span', { class: 'dot', text: s.price })] : []),
+      ...(s.approx ? [h('span', { class: 'approx', text: 'Pin shows the neighborhood, not the exact spot' })] : []));
     $('#mapCardNote').textContent = s.review ? `“${s.review}”` : '';
     $('#mapCardNote').hidden = !s.review;
     $('#mapCardThumb').replaceChildren(...photoEl(s, 200, 200));
@@ -1007,13 +1116,46 @@
     } catch (err) { showLoadError(err); return; }
     const n = state.shops.length;
     $('#heroCount').textContent = n ? `${n} shop${n === 1 ? '' : 's'} rated` : 'The inaugural guide';
+    const cities = [...new Set(state.shops.map((s) => s.city))];
+    $('#cityChip').textContent = cities.length === 1 ? cities[0] : `${cities.length} cities`;
+    addStructuredData(state.shops);
     buildDynamicFilters();
     applyFilters({ fit: true });
   }
 
+  // Describes every shop to search engines (schema.org). Google reads this even though it's added by JavaScript.
+  function addStructuredData(shops) {
+    const clean = (o) => JSON.parse(JSON.stringify(o));      // drops empty fields
+    const data = {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'The CREMA Guide',
+      itemListElement: shops.map((s, i) => ({
+        '@type': 'ListItem', position: i + 1,
+        item: clean({
+          '@type': 'CafeOrCoffeeShop',
+          name: s.name,
+          image: s.image || undefined,
+          priceRange: s.price || undefined,
+          address: s.address ? { '@type': 'PostalAddress', streetAddress: s.address, addressLocality: s.city } : undefined,
+          geo: s.hasCoords && !s.approx ? { '@type': 'GeoCoordinates', latitude: s.lat, longitude: s.lng } : undefined,
+          review: s.review ? {
+            '@type': 'Review',
+            author: { '@type': 'Organization', name: 'CREMA' },
+            reviewBody: s.review,
+            reviewRating: s.award > 0 ? { '@type': 'Rating', ratingValue: s.award, bestRating: 3, worstRating: 1 } : undefined
+          } : undefined
+        })
+      }))
+    };
+    let tag = document.getElementById('shopData');
+    if (!tag) { tag = h('script', { type: 'application/ld+json', id: 'shopData' }); document.head.append(tag); }
+    tag.textContent = JSON.stringify(data);
+  }
+
   $('#year').textContent = new Date().getFullYear();
   wireFilters();
-  initMap();
+  initMapWhenNear();
   loadGuide();
   </script>
 </body>
