@@ -518,6 +518,8 @@
           const customIcon = L.divIcon({ className: 'custom-map-pin', html: pinContent, iconSize: [0, 0], iconAnchor: [0, 0] });
           const marker = L.marker(coords, { icon: customIcon }).addTo(leafletMap);
           
+          const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.name + ' ' + (shop.address || 'Atlanta, GA'))}`;
+
           const popupContent = `
             <div class="w-48 text-xs font-sans space-y-1.5">
               <div class="font-bold text-amber-300 text-sm font-serif">${shop.name}</div>
@@ -526,7 +528,9 @@
                 <div>${renderVectorCups(shop.cups)}</div>
               </div>
               <p class="text-espresso-200/90 text-[11px] leading-tight line-clamp-2">${shop.review || ''}</p>
-              <a href="https://maps.google.com/?q=${encodeURIComponent(shop.name + ' ' + (shop.address || 'Atlanta'))}" target="_blank" class="inline-block mt-1 text-[10px] text-amber-400 underline font-mono">Open Directions →</a>
+              <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-1 text-[10px] text-amber-400 hover:text-amber-300 underline font-mono">
+                Open Directions ↗
+              </a>
             </div>
           `;
           marker.bindPopup(popupContent);
@@ -701,6 +705,7 @@
         card.className = "glass-card rounded-3xl overflow-hidden transition-all duration-500 flex flex-col justify-between group";
 
         const drinksList = (shop.bestDrinks || []).map(d => `<span class="px-2.5 py-1 bg-espresso-900/90 border border-espresso-300/15 rounded-lg text-[10px] text-espresso-200">${d}</span>`).join('');
+        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.name + ' ' + (shop.address || 'Atlanta, GA'))}`;
 
         card.innerHTML = `
           <div>
@@ -766,11 +771,15 @@
               </div>
             </div>
 
-            <div class="text-[11px] font-mono text-espresso-400/60 pt-2 truncate border-t border-dashed border-espresso-300/10 flex items-center justify-between">
-              <div class="flex items-center gap-1.5 truncate">
-                <svg class="w-3.5 h-3.5 text-espresso-400/80 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                <span class="truncate">${shop.address || 'Atlanta, GA'}</span>
-              </div>
+            <!-- Clickable Interactive Directions Link -->
+            <div class="text-[11px] font-mono pt-2 border-t border-dashed border-espresso-300/10 flex items-center justify-between">
+              <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-espresso-300/80 hover:text-amber-300 transition truncate group/dir">
+                <svg class="w-3.5 h-3.5 text-amber-400/80 shrink-0 group-hover/dir:text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="truncate hover:underline decoration-amber-400/40 underline-offset-2">${shop.address || 'Atlanta, GA'}</span>
+              </a>
+              <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-amber-400 hover:text-amber-300 shrink-0 font-mono flex items-center gap-0.5 ml-2 hover:underline">
+                Directions ↗
+              </a>
             </div>
 
           </div>
