@@ -109,7 +109,11 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Custom Leaflet Map Dark Styling */
+    /* Custom Leaflet Dark Mode Tiles (No API Key Required) */
+    .dark-map-tiles {
+      filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(125%) grayscale(80%) !important;
+    }
+
     .leaflet-popup-content-wrapper, .leaflet-popup-tip {
       background: rgba(26, 14, 8, 0.95) !important;
       backdrop-filter: blur(16px) !important;
@@ -271,13 +275,15 @@
           <input
             type="text"
             id="searchInput"
-            placeholder="AI Vibe Search: e.g. 'quiet laptop spot with pour over in O4W'..."
-            class="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-espresso-950/80 border border-espresso-300/20 rounded-2xl focus:outline-none focus:border-espresso-400 text-xs sm:text-sm text-espresso-100 placeholder-espresso-400/60 shadow-inner font-mono"
+            placeholder="AI Vibe Search: e.g. 'quiet laptop spot'..."
+            class="w-full pl-10 pr-32 py-2.5 sm:py-3 bg-espresso-950/80 border border-espresso-300/20 rounded-2xl focus:outline-none focus:border-espresso-400 text-xs sm:text-sm text-espresso-100 placeholder-espresso-400/60 shadow-inner font-mono"
           />
-          <svg class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3.5 top-3 sm:top-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3.5 top-3 sm:top-3.5 text-amber-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
-          <span class="absolute right-3.5 top-3 sm:top-3.5 text-[10px] font-mono text-espresso-400 uppercase tracking-widest hidden sm:inline">AI Smart Query</span>
+          <span class="absolute right-3 top-2.5 sm:top-3 px-2.5 py-1 bg-amber-400/10 border border-amber-400/30 rounded-lg text-[9px] font-mono text-amber-300 uppercase tracking-widest hidden sm:inline-flex items-center gap-1 pointer-events-none">
+            ✦ AI Search
+          </span>
         </div>
 
         <!-- Rating Filter Buttons -->
@@ -435,10 +441,14 @@
     function initMap() {
       if (leafletMap) return;
       leafletMap = L.map('map', { zoomControl: false }).setView([33.7650, -84.3700], 12);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+
+      // OpenStreetMap Tiles + CSS Inverted Dark Filter (No API Key Required)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        className: 'dark-map-tiles',
         maxZoom: 19
       }).addTo(leafletMap);
+
       L.control.zoom({ position: 'topright' }).addTo(leafletMap);
     }
 
