@@ -109,11 +109,11 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Custom Leaflet Dark Mode Tiles (No API Key Required) */
-    .dark-map-tiles {
-      filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(125%) grayscale(80%) !important;
+    /* Custom Leaflet Styling */
+    .leaflet-container {
+      background: #120904 !important;
+      outline: none !important;
     }
-
     .leaflet-popup-content-wrapper, .leaflet-popup-tip {
       background: rgba(26, 14, 8, 0.95) !important;
       backdrop-filter: blur(16px) !important;
@@ -136,8 +136,14 @@
     .leaflet-container a.leaflet-popup-close-button:hover {
       color: #F3ECE0 !important;
     }
-    .leaflet-container {
-      background: #120904 !important;
+    .leaflet-control-zoom a {
+      background-color: rgba(26, 14, 8, 0.9) !important;
+      color: #BD966E !important;
+      border-color: rgba(210, 184, 151, 0.2) !important;
+    }
+    .leaflet-control-zoom a:hover {
+      background-color: rgba(42, 21, 10, 0.95) !important;
+      color: #F3ECE0 !important;
     }
     .custom-map-pin {
       background: none !important;
@@ -442,11 +448,16 @@
       if (leafletMap) return;
       leafletMap = L.map('map', { zoomControl: false }).setView([33.7650, -84.3700], 12);
 
-      // OpenStreetMap Tiles + CSS Inverted Dark Filter (No API Key Required)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-        className: 'dark-map-tiles',
-        maxZoom: 19
+      // Clean Esri Dark Gray Canvas Base
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; Esri',
+        maxZoom: 16
+      }).addTo(leafletMap);
+
+      // Esri Dark Gray Labels Overlay
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '',
+        maxZoom: 16
       }).addTo(leafletMap);
 
       L.control.zoom({ position: 'topright' }).addTo(leafletMap);
