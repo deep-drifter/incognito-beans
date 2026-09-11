@@ -133,12 +133,15 @@
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       width: auto !important;
     }
+    /* Fixed Close Button Positioning to Prevent Overlapping Cup Icons */
     .leaflet-container a.leaflet-popup-close-button {
       color: #BD966E !important;
-      padding: 12px 14px 0 0 !important;
+      top: 12px !important;
+      right: 12px !important;
       font-size: 16px !important;
       font-weight: 600 !important;
       transition: color 0.2s ease !important;
+      z-index: 30 !important;
     }
     .leaflet-container a.leaflet-popup-close-button:hover {
       color: #F3ECE0 !important;
@@ -452,6 +455,25 @@
       }
     }
 
+    // Toggle Read More / Show Less for Field Note in Map Popups
+    function togglePopupReadMore(btn) {
+      const parent = btn.parentElement;
+      const textSpan = parent.querySelector('.popup-text-span');
+      const isExpanded = btn.getAttribute('data-expanded') === 'true';
+      const fullText = btn.getAttribute('data-full');
+      const shortText = btn.getAttribute('data-short');
+
+      if (isExpanded) {
+        textSpan.textContent = shortText;
+        btn.textContent = 'Read More';
+        btn.setAttribute('data-expanded', 'false');
+      } else {
+        textSpan.textContent = fullText;
+        btn.textContent = 'Show Less';
+        btn.setAttribute('data-expanded', 'true');
+      }
+    }
+
     function renderVectorCups(count) {
       if (count === 0 || !count) {
         return `<span class="px-2.5 py-1 bg-amber-400/10 border border-amber-400/40 rounded-lg text-amber-300 font-mono text-[10px] font-bold">✦ Selection</span>`;
@@ -521,23 +543,33 @@
           const marker = L.marker(coords, { icon: customIcon }).addTo(leafletMap);
           
           const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.name + ' ' + (shop.address || 'Atlanta, GA'))}`;
+          
+          // Truncate review for Map Popup to ~85 chars with clean Read More toggle
+          const fullReview = shop.review || 'No inspector notes recorded.';
+          const maxChar = 85;
+          const isLong = fullReview.length > maxChar;
+          const shortReview = isLong ? fullReview.substring(0, maxChar).trim() + '...' : fullReview;
+
+          const escapeAttr = (str) => str.replace(/"/g, '&quot;');
 
           const popupContent = `
             <div class="w-64 sm:w-72 text-xs font-sans space-y-2.5">
-              <div class="flex items-start justify-between gap-2 border-b border-espresso-300/10 pb-2">
-                <div>
-                  <div class="font-serif font-bold text-amber-300 text-base leading-tight">${shop.name}</div>
-                  <div class="text-espresso-400 font-mono text-[10px] uppercase tracking-wider mt-0.5">${shop.neighborhood || 'Atlanta'}</div>
+              <!-- Top Row: Reserved Padding (pr-8) for Close X so Cup Icons Never Intersect -->
+              <div class="pr-8 border-b border-espresso-300/10 pb-2">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="font-serif font-bold text-amber-300 text-base leading-tight truncate">${shop.name}</div>
+                  <div class="shrink-0">${renderVectorCups(shop.cups)}</div>
                 </div>
-                <div class="shrink-0 mt-0.5">
-                  ${renderVectorCups(shop.cups)}
-                </div>
+                <div class="text-espresso-400 font-mono text-[10px] uppercase tracking-wider mt-0.5">${shop.neighborhood || 'Atlanta'}</div>
               </div>
               
-              <p class="text-espresso-200/95 text-[12px] leading-relaxed font-mono italic">
-                "${shop.review || 'No inspector notes recorded.'}"
-              </p>
+              <!-- Inspector Note with Compact Preview & Read More -->
+              <div class="text-espresso-200/95 text-[11px] leading-relaxed font-mono italic">
+                "<span class="popup-text-span">${shortReview}</span>"
+                ${isLong ? `<button onclick="togglePopupReadMore(this)" data-full="${escapeAttr(fullReview)}" data-short="${escapeAttr(shortReview)}" data-expanded="false" class="text-amber-400 hover:text-amber-300 font-sans not-italic text-[10px] font-semibold underline ml-1 cursor-pointer">Read More</button>` : ''}
+              </div>
 
+              <!-- Footer info & Directions -->
               <div class="pt-2 flex items-center justify-between border-t border-espresso-300/10 text-[10px] font-mono">
                 <span class="text-espresso-400">${shop.price || '$$'} • ${shop.vibe || 'Specialty Coffee'}</span>
                 <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="text-amber-400 hover:text-amber-300 font-semibold underline underline-offset-2 flex items-center gap-0.5">
