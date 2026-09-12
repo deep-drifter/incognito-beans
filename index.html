@@ -256,7 +256,10 @@
                   background: inherit; border-right: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
     .pin svg { width: 13px; height: 13px; flex: none; }
     .pin .cups { display: inline-flex; gap: 1px; }
-    .pin .name { max-width: 0; overflow: hidden; opacity: 0; color: var(--ink); transition: max-width .3s ease, opacity .2s ease; }
+    /* overflow:hidden is what lets the name slide open — so the line box needs room for descenders (g, y),
+       otherwise the bottom of the text is clipped */
+    .pin .name { max-width: 0; overflow: hidden; opacity: 0; color: var(--ink); line-height: 1.5;
+                 transition: max-width .3s ease, opacity .2s ease; }
     .pin:hover .name, .pin:focus-visible .name, .pin.active .name, .pin.lit .name, .show-names .pin .name { max-width: 220px; opacity: 1; }
     .pin:hover, .pin.active, .pin.lit { transform: scale(1.08); }
     .pin.tier-3 { background: var(--pin-strong-bg); color: var(--pin-strong-fg); border-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
