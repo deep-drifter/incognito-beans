@@ -318,6 +318,10 @@
     .order .label { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
     .chips { display: flex; flex-wrap: wrap; gap: 6px; }
     .chips span { font-size: 13px; padding: 5px 11px; border-radius: 999px; background: var(--sage-soft); color: var(--ink); }
+    .chips .tag { font: inherit; font-size: 13px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line);
+                  background: transparent; color: var(--ink); cursor: pointer; min-height: 24px; }
+    .chips .tag:hover { background: var(--sage-soft); border-color: transparent; }
+    .chips .tag:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .shop .actions { display: flex; gap: 8px; margin-top: auto; padding-top: 6px; }
     .shop .actions > * { flex: 1; }
     .btn[disabled] { opacity: .45; cursor: not-allowed; }
@@ -506,7 +510,7 @@
         <label class="search">
           <span class="sr-only">Search shops</span>
           <svg aria-hidden="true"><use href="#i-search"/></svg>
-          <input id="searchInput" type="search" autocomplete="off" placeholder="Search shops, drinks, vibes…">
+          <input id="searchInput" type="search" autocomplete="off" placeholder="Search shops, drinks, oat milk, dog friendly…">
         </label>
         <div class="filter-row">
           <div class="filter-group">
@@ -591,6 +595,7 @@
   const SANITY_QUERY = `*[_type == "shop"]{
     "id": _id, name, neighborhood, cups, award, price,
     "image": image.asset->url,
+    vibeTags, workTags, amenities, menuTags, goodFor, proposedTags,
     vibe, workFriendly, bestDrinks, address, review,
     lat, lng, location, coordinates, city
   }`;
@@ -684,6 +689,33 @@
      ======================================================================= */
   const AWARD_WORDS = { three: 3, two: 2, one: 1, selection: 0, none: null };
 
+  // Tag titles, kept in step with schemaTypes/tags.js in the Studio.
+  const TAG_TITLES = { "cozy": "Cozy", "minimal": "Minimal", "design-forward": "Design-forward", "industrial": "Industrial", "plant-filled": "Plant-filled", "historic-building": "Historic building", "converted-house": "Converted house", "bright-and-airy": "Bright and airy", "dark-and-moody": "Dark and moody", "lively": "Lively and buzzy", "quiet": "Quiet and calm", "music-forward": "Music-forward", "art-on-the-walls": "Art on the walls", "neighbourhood-hangout": "Neighbourhood hangout", "date-worthy": "Date-worthy", "counter-only": "Counter only / standing", "roastery-on-site": "Roastery on site", "laptop-friendly": "Good for laptops", "no-laptops": "No-laptop policy", "no-laptops-at-peak": "Laptops discouraged at peak", "free-wifi": "Free wifi", "outlets": "Plenty of outlets", "few-outlets": "Few or no outlets", "large-tables": "Large tables", "communal-table": "Communal table", "bar-seating": "Bar or counter seating", "calls-ok": "Quiet enough for calls", "too-loud-for-calls": "Too loud for calls", "meeting-friendly": "Good for meetings", "time-limit": "Time limit at busy hours", "lots-of-seating": "Plenty of seating", "tight-seating": "Seating is tight", "oat-milk": "Oat milk", "non-dairy-options": "Other non-dairy (soy, almond, macadamia)", "dog-friendly-patio": "Dogs welcome on the patio", "dog-friendly-inside": "Dogs welcome inside", "kid-friendly": "Kid and stroller friendly", "changing-table": "Changing table", "patio": "Outdoor patio", "parking-lot": "Own parking lot", "street-parking": "Easy street parking", "bike-rack": "Bike rack", "transit-accessible": "Near transit / walkable", "step-free-entry": "Step-free entry", "accessible-restroom": "Accessible restroom", "restroom": "Restroom for customers", "open-early": "Open early (7am or before)", "open-late": "Open late (7pm or after)", "walk-up-window": "Walk-up window", "drive-through": "Drive-through", "card-only": "Card only", "mobile-ordering": "Mobile ordering", "bakes-in-house": "Pastries baked in house", "full-food-menu": "Full food menu", "brunch": "Brunch", "vegan-options": "Vegan options", "gluten-free-options": "Gluten-free options", "matcha": "Serious matcha", "tea": "Serious tea programme", "beer-and-wine": "Beer and wine", "cocktails": "Espresso martinis / cocktails", "cold-brew-on-tap": "Cold brew on tap", "good-decaf": "Decaf taken seriously", "single-origin-espresso": "Single-origin espresso", "rotating-filter": "Rotating filter selection", "retail-beans": "Retail beans to take home", "brew-gear": "Brew gear for sale", "remote-working": "Working remotely", "business-meeting": "A business meeting", "meeting-a-friend": "Meeting a friend", "first-date": "A first date", "reading-alone": "An hour alone with a book", "quick-takeaway": "A quick takeaway", "with-kids": "Bringing kids", "with-a-dog": "Bringing a dog", "weekend-morning": "A slow weekend morning", "coffee-nerds": "Impressing a coffee nerd", "groups": "A group" };
+
+  // Every tag a shop carries, from the five Studio groups plus any proposed ones.
+  // Proposed tags have no title yet, so they are shown as typed.
+  const TAG_FIELDS = ['goodFor', 'amenities', 'workTags', 'vibeTags', 'menuTags'];
+  function collectTags(raw) {
+    const out = [];
+    const seen = new Set();
+    for (const field of TAG_FIELDS) {
+      const list = Array.isArray(raw[field]) ? raw[field] : [];
+      for (const v of list) {
+        if (typeof v !== 'string' || seen.has(v)) continue;
+        seen.add(v);
+        out.push({ value: v, label: TAG_TITLES[v] || v.replace(/-/g, ' ') });
+      }
+    }
+    const proposed = Array.isArray(raw.proposedTags) ? raw.proposedTags : [];
+    for (const v of proposed) {
+      const t = typeof v === 'string' ? v.trim() : '';
+      if (!t || seen.has(t)) continue;
+      seen.add(t);
+      out.push({ value: t, label: t });
+    }
+    return out;
+  }
+
   function normalize(raw) {
     let award = null;
     if (raw.award && raw.award in AWARD_WORDS) award = AWARD_WORDS[raw.award];
@@ -697,6 +729,7 @@
     const city = typeof raw.city === 'string' && raw.city.trim() ? raw.city.trim() : (raw.city?.name || DEFAULT_CITY);
     const price = typeof raw.price === 'string' ? raw.price.trim() : '';
     const drinks = Array.isArray(raw.bestDrinks) ? raw.bestDrinks.filter((d) => typeof d === 'string' && d.trim()) : [];
+    const tags = collectTags(raw);
 
     return {
       id: String(raw.id),
@@ -704,8 +737,8 @@
       award, neighborhood, price,
       priceLevel: (price.match(/\$/g) || []).length || null,
       image: raw.image || null,
-      vibe: typeof raw.vibe === 'string' ? raw.vibe.trim() : '',
-      work: typeof raw.workFriendly === 'string' ? raw.workFriendly.trim() : '',
+      tags,
+      tagText: tags.map((t) => `${t.label} ${t.value.replace(/-/g, ' ')}`).join(' '),
       drinks,
       address: typeof raw.address === 'string' ? raw.address.trim() : '',
       review: typeof raw.review === 'string' ? raw.review.trim() : '',
@@ -744,7 +777,7 @@
      ======================================================================= */
   const state = { shops: [], filtered: [], award: 'all', price: 'all', hood: 'all', q: '' };
 
-  const FIELD_WEIGHTS = [['name', 10], ['neighborhood', 7], ['drinks', 6], ['vibe', 5], ['work', 5], ['review', 2], ['address', 2]];
+  const FIELD_WEIGHTS = [['name', 10], ['neighborhood', 7], ['tagText', 6], ['drinks', 6], ['review', 2], ['address', 2]];
   function searchScore(shop, tokens) {
     let total = 0;
     for (const t of tokens) {
@@ -868,8 +901,6 @@
       } }) : null;
 
     const facts = [];
-    if (s.vibe) facts.push(h('div', {}, h('dt', { text: 'Atmosphere' }), h('dd', { text: s.vibe })));
-    if (s.work) facts.push(h('div', {}, h('dt', { text: 'Working' }), h('dd', { text: s.work })));
 
     const metaBits = [awardEl(s.award)];
     if (s.neighborhood) metaBits.push(h('span', { class: 'dot', text: s.neighborhood }));
@@ -884,6 +915,13 @@
         facts.length ? h('dl', { class: 'facts' }, facts) : null,
         s.drinks.length ? h('div', { class: 'order' }, h('span', { class: 'label', text: 'What to order' }),
           h('div', { class: 'chips' }, s.drinks.map((d) => h('span', { text: d })))) : null,
+        s.tags.length ? h('div', { class: 'order' }, h('span', { class: 'label', text: 'Good to know' }),
+          h('div', { class: 'chips tag-chips' }, s.tags.map((t) => h('button', {
+            type: 'button', class: 'tag', text: t.label,
+            'aria-label': `Find other shops tagged ${t.label}`,
+            onclick: () => { $('#searchInput').value = t.label; state.q = t.label.toLowerCase();
+              applyFilters({ fit: true }); $('#guide').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); }
+          })))) : null,
         h('div', { class: 'actions' },
           h('a', { class: 'btn btn-quiet btn-sm', href: directionsUrl(s), target: '_blank', rel: 'noopener noreferrer', text: 'Directions' }),
           s.hasCoords ? h('button', { class: 'btn btn-primary btn-sm', type: 'button', text: 'Show on map',
@@ -1164,6 +1202,10 @@
           name: s.name,
           image: s.image || undefined,
           priceRange: s.price || undefined,
+          keywords: s.tags.length ? s.tags.map((t) => t.label).join(', ') : undefined,
+          amenityFeature: s.tags.length ? s.tags.map((t) => ({
+            '@type': 'LocationFeatureSpecification', name: t.label, value: true
+          })) : undefined,
           address: s.address ? { '@type': 'PostalAddress', streetAddress: s.address, addressLocality: s.city } : undefined,
           geo: s.hasCoords && !s.approx ? { '@type': 'GeoCoordinates', latitude: s.lat, longitude: s.lng } : undefined,
           review: s.review ? {

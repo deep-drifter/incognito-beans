@@ -187,3 +187,40 @@ through the page without a mouse, and zoom to 200%.
 | Hero photo | Unsplash | Own photography is part of the brand. |
 | Background music | Pixabay CDN | Host a licensed track in the repo and point `MUSIC_SRC` at it. |
 | Map tiles | OpenFreeMap | Free and fine at this size; Mapbox is the upgrade if you want a designer tuning the map. |
+
+## Tags (room, amenities, intent)
+
+Tags describe the **place**. They never affect the cup rating — that stays coffee
+and hospitality only.
+
+Inspectors tap them in the Studio (Shop → "The room" tab) from five predefined
+grids defined in `schemaTypes/tags.js`:
+
+| Field | What it covers |
+|---|---|
+| `vibeTags` | atmosphere — cozy, design-forward, quiet, historic building |
+| `workTags` | outlets, wifi, noise, seating, laptop policy |
+| `amenities` | oat milk, dogs, kids, parking, step-free entry, hours |
+| `menuTags` | food, matcha, tea, alcohol, retail beans |
+| `goodFor` | intent — remote working, first date, with kids, coffee nerds |
+| `proposedTags` | free text, for anything not standardised yet |
+
+**Values are slugs on purpose** (`oat-milk`, `dog-friendly-patio`). They are stable,
+they read cleanly in a URL, they group identical shops no matter who tagged them,
+and an assistant answering "dog friendly coffee in Atlanta" can match them exactly.
+`TAG_TITLES` in index.html maps slug → human title and **must be kept in step with
+`schemaTypes/tags.js`** — regenerate it from `ALL_TAG_GROUPS` when tags change.
+
+Proposed tags are searchable immediately but are not filterable until promoted into
+a grid. That gap is deliberate: it is what stops "dog friendly", "dog-friendly" and
+"Dog Friendly" becoming three different filters.
+
+On the site, tags render as a "Good to know" chip row on each card. Each chip is a
+button that drops its label into the search box, so tag filtering needs no new UI.
+Tags are also emitted in the JSON-LD as `keywords` and `amenityFeature`
+(`LocationFeatureSpecification`), which is how ACS-style queries reach the guide
+through search engines and AI assistants.
+
+The legacy free-text `vibe` / `workFriendly` string fields were replaced by these
+arrays. Old values still sit in the dataset but nothing reads them; the Studio shows
+them as unknown fields with a Remove button.
