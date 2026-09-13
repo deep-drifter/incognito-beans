@@ -16,7 +16,7 @@ how it fits together.
 | Vercel | Watches the repo and republishes within a minute or two of a commit. No build step. |
 | Sanity | Holds the shops. The page fetches them in the browser when someone opens the site. |
 
-Live at `incognito-beans.vercel.app`. Sanity project `cxp9yxyf`, dataset `production`.
+Live at `crema.guide`. Sanity project `cxp9yxyf`, dataset `production`.
 
 ### The files
 
